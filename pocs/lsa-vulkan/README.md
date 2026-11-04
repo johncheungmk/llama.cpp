@@ -6,6 +6,8 @@ This llama.cpp fork contains synthetic sparse-attention primitives and an opt-in
 
 [Native measurements and current validation limits](NATIVE_RESULTS.md) distinguish real calibration, synthetic GPU timings, server smoke checks and model-output validation.
 
+The current rank64 map worsens perplexity by **6.57%** on the matched 4K fixture. The all-visible output control passes exactly, but pruning quality remains unresolved. Production is unchanged. Full-GPU C1-C5 measurements require the separately authorized [maintenance procedure](FULL_GPU_TEST_PLAN.md).
+
 **Phase 2:** [FLASH_NEXT.md](FLASH_NEXT.md) adds a real-checkpoint CPU activation collector, experimentally calibrated maps for all 12 QSA layers, QSA-specific vectorized search, and measured synthetic selection-plus-attention latency. Real calibration and synthetic performance evidence are distinct. The production model still does not execute LSA.
 
 Base: llama.cpp b11681, commit `5e03a1ff450cae37a774684de55d14fb48b1f90b`. The original synthetic phases use the public ggml C API. The native phase additionally modifies this fork's model graph and cache access/state guards while retaining the public C API parameter layouts and existing Vulkan operations. No separate dependency fork is required.

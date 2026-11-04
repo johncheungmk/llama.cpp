@@ -1,0 +1,47 @@
+{
+  "production_task_state": "Running",
+  "five_occupied_256k_contexts_validated": false,
+  "five_262144_token_allocations_verified": true,
+  "scope": "Same live PID and launcher; health and context allocation checked. No production benchmark or service restart performed. Idle status is recorded, not required.",
+  "health": "ok",
+  "own_test_task_removed": true,
+  "free_commit_kib": 12339384,
+  "production_private_commit_bytes": 105618132992,
+  "free_physical_ram_kib": 20161356,
+  "schema": 1,
+  "remaining_isolated_model_workers": [],
+  "localhost_18080_listener_absent": true,
+  "same_production_pid": true,
+  "launcher_sha256": "c3f53da4ffe05cf9ca4a940c9ae029d963b7c5f4a87b4fa452c5d0d0c2ddcded",
+  "same_launcher_sha256": true,
+  "observed_utc": "2026-11-04T17:13:03.2614987Z",
+  "passed": true,
+  "slots": [
+    {
+      "n_ctx": 262144,
+      "id": 0,
+      "is_processing": false
+    },
+    {
+      "n_ctx": 262144,
+      "id": 1,
+      "is_processing": false
+    },
+    {
+      "n_ctx": 262144,
+      "id": 2,
+      "is_processing": false
+    },
+    {
+      "n_ctx": 262144,
+      "id": 3,
+      "is_processing": false
+    },
+    {
+      "n_ctx": 262144,
+      "id": 4,
+      "is_processing": false
+    }
+  ],
+  "production_pid": 12492
+}

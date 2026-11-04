@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "kind": "native_pca_localhost_server_smoke",
+  "gpu_layers": 4,
+  "context_tokens": 512,
+  "slots": 1,
+  "attention_kv_types": "Q8_0/Q8_0",
+  "map_sha256": "99b11f2daa58a5b05344ad8cad4c4e8fb50030a92c85887918e0c17a6c9910f2",
+  "runtime_llama_sha256": "5b468ec268b98b0f6b71741c1765c2359db0ea9ecd9b4bbd6fba08bcd232c272",
+  "source_sha256": "b283d73a2f5308b6ee628d5430123a87221f87c5801e54c7112afa9683a5a351",
+  "production_ready": false,
+  "elapsed_seconds": 59.37764839999727,
+  "usage": {
+    "completion_tokens": 8,
+    "prompt_tokens": 24,
+    "total_tokens": 32,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 24,
+    "prompt_ms": 22690.389,
+    "prompt_per_token_ms": 945.432875,
+    "prompt_per_second": 1.0577165512675875,
+    "predicted_n": 8,
+    "predicted_ms": 36662.652,
+    "predicted_per_token_ms": 5237.521714285715,
+    "predicted_per_second": 0.19092999600792654
+  },
+  "choices": [
+    {
+      "finish_reason": "length",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "The number after two is **3**."
+      }
+    }
+  ],
+  "smoke_pass": true,
+  "isolated_server_stopped": true,
+  "localhost_port_closed": true
+}
