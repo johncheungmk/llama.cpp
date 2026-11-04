@@ -1,6 +1,6 @@
 # Flash Next calibration and search: phase 2
 
-This phase implements a real-checkpoint calibration path and reduces experimental search overhead. It does **not** enable LSA in llama-server, produce a validated long-context model, or measure Flash Next model tokens/sec.
+This document records historical phase-2 calibration and synthetic measurements. The subsequent [native phase](NATIVE_RUNTIME.md) adds an opt-in flat low-rank model graph, not hierarchical LSA. Phase 2 itself does not enable LSA in llama-server, produce a validated long-context model, or measure Flash Next model tokens/sec. Its raw evidence and source fingerprints remain unchanged.
 
 ## Exact geometry and scoring
 

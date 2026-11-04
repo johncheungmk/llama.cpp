@@ -1,5 +1,14 @@
 llama_add_compile_flags()
 
+add_executable(test-qwen4exp-pca test-qwen4exp-pca.cpp ../src/models/qwen4exp-pca.cpp)
+target_compile_features(test-qwen4exp-pca PRIVATE cxx_std_17)
+target_link_libraries(test-qwen4exp-pca PRIVATE ggml)
+add_test(NAME test-qwen4exp-pca COMMAND test-qwen4exp-pca)
+
+add_executable(bench-qwen4exp-pca bench-qwen4exp-pca.cpp ../src/models/qwen4exp-pca.cpp)
+target_compile_features(bench-qwen4exp-pca PRIVATE cxx_std_17)
+target_link_libraries(bench-qwen4exp-pca PRIVATE ggml)
+
 # Optional args:
 # - LINK: libraries to link against (defaults to llama-common, which also brings llama)
 function(llama_build source)

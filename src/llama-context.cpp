@@ -3606,6 +3606,9 @@ size_t llama_context::state_seq_save_file(llama_seq_id seq_id, const char * file
 }
 
 size_t llama_context::state_write_data(llama_io_write_i & io) {
+    if (!model.supports_state_serialization()) {
+        throw std::runtime_error("experimental model cache format does not support serialized state");
+    }
     LLAMA_LOG_DEBUG("%s: writing state\n", __func__);
 
     // write model info
@@ -3626,6 +3629,9 @@ size_t llama_context::state_write_data(llama_io_write_i & io) {
 }
 
 size_t llama_context::state_read_data(llama_io_read_i & io) {
+    if (!model.supports_state_serialization()) {
+        throw std::runtime_error("experimental model cache format does not support serialized state");
+    }
     LLAMA_LOG_DEBUG("%s: reading state\n", __func__);
 
     // read model info
@@ -3652,6 +3658,9 @@ size_t llama_context::state_read_data(llama_io_read_i & io) {
 }
 
 size_t llama_context::state_seq_write_data(llama_io_write_i & io, llama_seq_id seq_id, llama_state_seq_flags flags) {
+    if (!model.supports_state_serialization()) {
+        throw std::runtime_error("experimental model cache format does not support serialized state");
+    }
     if (memory) {
         memory->state_write(io, seq_id, flags);
     }
@@ -3660,6 +3669,9 @@ size_t llama_context::state_seq_write_data(llama_io_write_i & io, llama_seq_id s
 }
 
 size_t llama_context::state_seq_read_data(llama_io_read_i & io, llama_seq_id seq_id, llama_state_seq_flags flags) {
+    if (!model.supports_state_serialization()) {
+        throw std::runtime_error("experimental model cache format does not support serialized state");
+    }
     if (memory) {
         memory->state_read(io, seq_id, flags);
     }

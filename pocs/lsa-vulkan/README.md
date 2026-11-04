@@ -1,10 +1,14 @@
 # Experimental latent sparse attention primitives on AMD Vulkan
 
-This is a standalone, synthetic proof of concept in a llama.cpp fork. It runs latent projection, selected-row gathering, and attention through ggml's existing Vulkan backend on an AMD Radeon 8065S (`gfx1151`). It does **not** add LSA to llama-server or Qwen3.8-Flash-Next, and it does not demonstrate an end-to-end inference speedup.
+This llama.cpp fork contains synthetic sparse-attention primitives and an opt-in native Flash Next low-rank indexer experiment on an AMD Radeon 8065S (`gfx1151`). It does not implement hierarchical LSA or demonstrate a production inference speedup.
+
+**Native phase:** [NATIVE_RUNTIME.md](NATIVE_RUNTIME.md) describes map loading, projected pooled-cache integration, Vulkan scoring, bounded teacher distillation and model/serving validation. This flat low-rank path is an independent experiment, not a faithful port of Prefrontal LSA. The production service remains unchanged.
+
+[Native measurements and current validation limits](NATIVE_RESULTS.md) distinguish real calibration, synthetic GPU timings, server smoke checks and model-output validation.
 
 **Phase 2:** [FLASH_NEXT.md](FLASH_NEXT.md) adds a real-checkpoint CPU activation collector, experimentally calibrated maps for all 12 QSA layers, QSA-specific vectorized search, and measured synthetic selection-plus-attention latency. Real calibration and synthetic performance evidence are distinct. The production model still does not execute LSA.
 
-Base: llama.cpp b11681, commit `5e03a1ff450cae37a774684de55d14fb48b1f90b`. The experiment uses the public ggml C API; no llama.cpp core code, public headers, or dependent libraries were modified. No separate library fork is needed for this experiment.
+Base: llama.cpp b11681, commit `5e03a1ff450cae37a774684de55d14fb48b1f90b`. The original synthetic phases use the public ggml C API. The native phase additionally modifies this fork's model graph and cache access/state guards while retaining the public C API parameter layouts and existing Vulkan operations. No separate dependency fork is required.
 
 ## What is implemented
 
@@ -44,6 +48,6 @@ The tree's candidate cap bounds rescoring, not total internal-node traversal or 
 
 The [published LSA map release](https://github.com/Prefrontal-AI/latent-sparse-attention/releases/tag/d-lsa-weights-v1) inspected for this work supplies maps for Qwen3.8-27B and GLM5.3-Flash. No compatible trained Flash Next map was available in that release. A map trained and validated for the exact Flash Next layers and attention geometry is a prerequisite; the original synthetic map cannot substitute for it. Phase 2 now fits experimental PCA maps from the real Flash Next checkpoint, but short-capture diagnostics do not establish long-context model quality or serving readiness.
 
-A serving implementation would then need model-specific graph integration, correct head/position handling, a persistent incrementally maintained index tied to the KV lifecycle, efficient selection/index transfer or GPU search, and proper synchronization across concurrent slots. It must pass dense equivalence tests when selecting all tokens, causal/prefix/eviction tests, and long-context quality evaluations with the trained map before matched model throughput/TTFT benchmarks. The current 16K synthetic run does not validate five 256K contexts or any tokens-per-second improvement.
+The native phase now adds model-specific graph integration and projected pooled-cache reuse. A hierarchical implementation would still need an incrementally maintained search index and efficient GPU traversal. Prefix/eviction and concurrent-slot tests, broader long-context quality evaluation, and matched full-GPU serving measurements remain necessary. The original 16K synthetic run does not validate five 256K contexts or any tokens-per-second improvement.
 
 The existing five-slot server was preserved during this experiment; [service-preservation.json](results/service-preservation.json) records the post-run checks. No change to serving behavior is included in this branch.

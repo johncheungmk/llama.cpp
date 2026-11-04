@@ -1,0 +1,2 @@
+# Preserve the exact prompt bytes recorded in capture SHA-256 manifests.
+public-4k-*.txt -text whitespace=cr-at-eol

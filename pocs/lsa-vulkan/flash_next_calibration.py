@@ -156,10 +156,10 @@ def load_capture(path, profile):
     if path.stat().st_size > 128 * 1024 * 1024:
         raise ValueError("capture archive too large")
     with zipfile.ZipFile(path) as archive:
-        if len(archive.infolist()) != 4 or sum(x.file_size for x in archive.infolist()) > 128 * 1024 * 1024:
+        if len(archive.infolist()) not in (4, 5) or sum(x.file_size for x in archive.infolist()) > 128 * 1024 * 1024:
             raise ValueError("invalid capture size or member count")
     with np.load(path, allow_pickle=False) as archive:
-        if set(archive.files) != {"keys", "queries", "visible", "manifest"}:
+        if set(archive.files) not in ({"keys", "queries", "visible", "manifest"}, {"keys", "queries", "visible", "manifest", "native_scores"}):
             raise ValueError("unexpected capture members")
         manifest_array = archive["manifest"]
         if manifest_array.ndim != 0 or manifest_array.dtype.kind != "U" or manifest_array.nbytes > 65536:
@@ -168,8 +168,11 @@ def load_capture(path, profile):
         keys = finite(archive["keys"], (128,), "keys", MAX_POOLS)
         queries = finite(archive["queries"], (4, 128), "queries", MAX_QUERIES)
         visible = np.asarray(archive["visible"])
+        native_scores = np.asarray(archive["native_scores"]) if "native_scores" in archive.files else None
     if visible.dtype.kind not in "iu" or visible.shape != (len(queries),) or np.any(visible < 1) or np.any(visible > len(keys)):
         raise ValueError("invalid causal visibility")
+    if native_scores is not None and (native_scores.dtype.kind != "f" or native_scores.shape != (len(queries), len(keys)) or not np.isfinite(native_scores).all() or np.any(native_scores < 0)):
+        raise ValueError("invalid native teacher scores")
     if manifest.get("schema") != 1 or manifest.get("source_kind") not in ("real_model_capture", "synthetic_fixture"):
         raise ValueError("unrecognized capture provenance")
     if manifest.get("stage") != "post_norm_post_rope_pooled_indexer" or manifest.get("layer") not in profile["qsa_layers"]:
@@ -179,10 +182,10 @@ def load_capture(path, profile):
     documents = manifest.get("document_ids")
     if not isinstance(documents, list) or not documents or any(not isinstance(x, str) or not x for x in documents) or len(set(documents)) != len(documents):
         raise ValueError("document provenance is required")
-    return keys, queries, visible, manifest
+    return keys, queries, visible, manifest, native_scores
 
 
-def calibrate(train_path, heldout_path, profile, rank, candidate_budget):
+def calibrate(train_path, heldout_path, profile, rank, candidate_budget, method="pca", steps=50):
     train = load_capture(train_path, profile)
     heldout = load_capture(heldout_path, profile)
     if train[3]["layer"] != heldout[3]["layer"] or train[3]["source_kind"] != heldout[3]["source_kind"]:
@@ -192,20 +195,28 @@ def calibrate(train_path, heldout_path, profile, rank, candidate_budget):
     if hashlib.sha256(Path(train_path).read_bytes()).digest() == hashlib.sha256(Path(heldout_path).read_bytes()).digest():
         raise ValueError("training and held-out archives are identical")
     projection = fit_projection(train[0], train[1], rank)
+    training_report = None
+    if method == "distill":
+        from train_qsa_projection import fit
+        projection, training_report = fit(train[0], train[1], train[2], projection, steps=steps, native_teacher_scores=train[4])
+    elif method != "pca":
+        raise ValueError("unsupported projection fitting method")
     index = QsaBucketIndex(heldout[0], projection)
-    recalls, diagnostic_recalls, nontrivial_diagnostic_recalls = [], [], []
+    recalls, diagnostic_recalls, nontrivial_diagnostic_recalls, flat_recalls = [], [], [], []
     squared_error, squared_teacher = 0.0, 0.0
     pool_budget = profile["token_budget"] // profile["pool_size"]
     if type(candidate_budget) is not int or not pool_budget <= candidate_budget <= MAX_POOLS:
         raise ValueError("candidate budget is outside QSA limits")
-    for query, visible in zip(heldout[1], heldout[2]):
+    for row, (query, visible) in enumerate(zip(heldout[1], heldout[2])):
         visible = int(visible)
-        expected = top_ids(qsa_scores(heldout[0][:visible], query), min(pool_budget, visible))
+        teacher = heldout[4][row, :visible] if heldout[4] is not None else qsa_scores(heldout[0][:visible], query)
+        expected = top_ids(teacher, min(pool_budget, visible))
         actual, _ = index.select(query, pool_budget, candidate_budget, visible)
         recalls.append(len(np.intersect1d(expected, actual)) / len(expected))
-        teacher = qsa_scores(heldout[0][:visible], query)
         latent_keys, latent_query = heldout[0][:visible] @ projection.T, query @ projection.T
         approximate = np.maximum(latent_keys @ latent_query.T, 0).sum(axis=1) / math.sqrt(128)
+        if visible > pool_budget:
+            flat_recalls.append(len(np.intersect1d(expected, top_ids(approximate, pool_budget))) / pool_budget)
         squared_error += float(np.sum((approximate.astype(np.float64) - teacher) ** 2))
         squared_teacher += float(np.sum(teacher.astype(np.float64) ** 2))
         diagnostic_k = min(32, visible)
@@ -214,7 +225,7 @@ def calibrate(train_path, heldout_path, profile, rank, candidate_budget):
         if visible > 32:
             nontrivial_diagnostic_recalls.append(diagnostic_recall)
     report = {
-        "schema": 1, "method": "uncentered_equal_key_query_second_moment_PCA_with_full_QSA_rescoring",
+        "schema": 1, "method": "uncentered_equal_key_query_second_moment_PCA_with_full_QSA_rescoring" if method == "pca" else "independent_teacher_QSA_softmax_distillation_with_full_QSA_rescoring",
         "model_id": profile["model_id"], "layer": train[3]["layer"], "rank": rank,
         "source_kind": train[3]["source_kind"], "serving_ready": False,
         "train_sha256": hashlib.sha256(Path(train_path).read_bytes()).hexdigest(),
@@ -228,7 +239,12 @@ def calibrate(train_path, heldout_path, profile, rank, candidate_budget):
         "diagnostic_top32_nontrivial_recall_mean": float(np.mean(nontrivial_diagnostic_recalls)) if nontrivial_diagnostic_recalls else None,
         "diagnostic_top32_nontrivial_queries": len(nontrivial_diagnostic_recalls),
         "diagnostic_top32_recall_per_query": diagnostic_recalls,
+        "native_flat_projected_top512_nontrivial_recall_mean": float(np.mean(flat_recalls)) if flat_recalls else None,
+        "native_flat_projected_top512_nontrivial_recall_min": min(flat_recalls) if flat_recalls else None,
+        "native_flat_projected_top512_nontrivial_queries": len(flat_recalls),
         "train_pools": len(train[0]), "heldout_pools": len(heldout[0]),
+        "fitting_method": method, "distillation": training_report,
+        "teacher_score_source": "captured_native_scores" if heldout[4] is not None else "F32_formula_from_captured_keys_queries",
         "teacher": "checkpoint QSA pooled-block indexer, not dense attention or final model outputs",
         "limitations": "Offline single-layer map. No serving loader, KV lifecycle, model quality or end-to-end performance validation. Real capture provenance is supplied by the caller, not independently authenticated.",
     }
@@ -242,13 +258,15 @@ def main():
     parser.add_argument("--heldout-capture", type=Path, required=True)
     parser.add_argument("--rank", type=int, default=16)
     parser.add_argument("--candidate-budget", type=int, default=4096)
+    parser.add_argument("--method", choices=("pca", "distill"), default="pca")
+    parser.add_argument("--steps", type=int, default=50, choices=range(1, 101))
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     # Exclusive creation prevents silently replacing a previous calibration.
     if args.output.exists():
         parser.error("output exists; select a new filename")
     profile = json.loads(args.profile.read_text(encoding="utf-8-sig"))
-    projection, report = calibrate(args.train_capture, args.heldout_capture, profile, args.rank, args.candidate_budget)
+    projection, report = calibrate(args.train_capture, args.heldout_capture, profile, args.rank, args.candidate_budget, args.method, args.steps)
     with args.output.open("xb") as output:
         np.savez(output, projection=projection, manifest=json.dumps(report))
     print(json.dumps(report, indent=2))

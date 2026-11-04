@@ -2576,8 +2576,13 @@ struct llama_model_clef : public llama_model_qwen35 {
 };
 
 
+class qwen4exp_pca_maps;
+
 struct llama_model_qwen4exp : public llama_model_base {
-    llama_model_qwen4exp(const struct llama_model_params & params) : llama_model_base(params) {}
+    llama_model_qwen4exp(const struct llama_model_params & params);
+    ~llama_model_qwen4exp() override;
+    std::unique_ptr<qwen4exp_pca_maps> experimental_qsa_pca;
+    bool supports_state_serialization() const override { return !experimental_qsa_pca; }
 
     class llm_graph_input_kpool;
 

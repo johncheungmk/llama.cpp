@@ -1,0 +1,196 @@
+{
+  "schema": 1,
+  "kind": "synthetic_native_Vulkan_QSA_indexer_microbenchmark",
+  "device": "AMD Radeon 8065S / gfx1151, Windows Vulkan",
+  "cpu_fallback_allowed": false,
+  "source_sha256": {
+    "tests/bench-qwen4exp-pca.cpp": "b6db73e9b43aa6ce1a779dcf39d5a07da64f7b0269012274d8d8d8caf1d56982",
+    "src/models/qwen4exp-pca.cpp": "1acb414a62f6507e1c9c899bf3a823ceb67b1672e2e80fecadbdd282229ad0ba"
+  },
+  "queries": 1,
+  "query_heads": 4,
+  "original_dimension": 128,
+  "projection_rank": 64,
+  "selected_pools": 512,
+  "pool_size": 4,
+  "fixture": "MSVC mt19937 seed 827+pools; independent normal values in first 64 lanes, zero remaining lanes; identity-prefix map. Exactly rank-64 fixture, not real model activations.",
+  "cache_storage": "F32 rows with raw128|pooled128 stride; production indexer cache is quantized. Cache gathering reads all128 lanes for stock and the first64 lanes for projected scoring.",
+  "timing": "Three warmups each, then 15 alternating synchronized runs of prebuilt graphs. Includes GPU query projection for the rank64 path, pooled-row gathering, scores, and native top512 selection. Excludes setup, cache construction/new-pool projection, uploads, readback, attention and model execution. Samples are sorted, not time ordered.",
+  "arithmetic": "Stock fused indexer uses FP16 dot4 intermediates. Projected path uses four F32 matmuls plus ReLU/add/scale/mask. Synthetic selection differences can arise from arithmetic even though the fixture lies entirely in the selected subspace.",
+  "rows": [
+    {
+      "pools": 1024,
+      "represented_tokens": 4096,
+      "stock_median_ms": 0.0682,
+      "rank64_median_ms": 0.1158,
+      "synthetic_top512_recall": 1.0,
+      "sorted_samples_ms": {
+        "stock_ms": [
+          0.0655,
+          0.0664,
+          0.0667,
+          0.0667,
+          0.0668,
+          0.0669,
+          0.0677,
+          0.0682,
+          0.0682,
+          0.069,
+          0.0699,
+          0.0712,
+          0.0729,
+          0.082,
+          0.0896
+        ],
+        "rank64_ms": [
+          0.0889,
+          0.0903,
+          0.0918,
+          0.0936,
+          0.0954,
+          0.0975,
+          0.0985,
+          0.1158,
+          0.1857,
+          0.1917,
+          0.2116,
+          0.257,
+          0.2834,
+          0.3049,
+          0.7735
+        ]
+      }
+    },
+    {
+      "pools": 4096,
+      "represented_tokens": 16384,
+      "stock_median_ms": 0.0942,
+      "rank64_median_ms": 0.1549,
+      "synthetic_top512_recall": 1.0,
+      "sorted_samples_ms": {
+        "stock_ms": [
+          0.0793,
+          0.0926,
+          0.0929,
+          0.0931,
+          0.0933,
+          0.0935,
+          0.0937,
+          0.0942,
+          0.0944,
+          0.0948,
+          0.0955,
+          0.0964,
+          0.0975,
+          0.1018,
+          0.1736
+        ],
+        "rank64_ms": [
+          0.1072,
+          0.1072,
+          0.1076,
+          0.11,
+          0.1109,
+          0.1161,
+          0.1276,
+          0.1549,
+          0.2096,
+          0.2134,
+          0.2215,
+          0.2223,
+          0.2244,
+          0.2251,
+          0.229
+        ]
+      }
+    },
+    {
+      "pools": 16384,
+      "represented_tokens": 65536,
+      "stock_median_ms": 0.1795,
+      "rank64_median_ms": 0.2162,
+      "synthetic_top512_recall": 0.998046875,
+      "sorted_samples_ms": {
+        "stock_ms": [
+          0.1506,
+          0.151,
+          0.1511,
+          0.1511,
+          0.1741,
+          0.1776,
+          0.1788,
+          0.1795,
+          0.1809,
+          0.184,
+          0.1853,
+          0.2056,
+          0.2369,
+          0.2414,
+          0.2524
+        ],
+        "rank64_ms": [
+          0.1958,
+          0.1959,
+          0.2097,
+          0.2132,
+          0.2132,
+          0.2156,
+          0.2157,
+          0.2162,
+          0.2163,
+          0.2218,
+          0.2333,
+          0.2577,
+          0.2589,
+          0.2805,
+          0.3701
+        ]
+      }
+    },
+    {
+      "pools": 65536,
+      "represented_tokens": 262144,
+      "stock_median_ms": 0.715,
+      "rank64_median_ms": 0.6376,
+      "synthetic_top512_recall": 1.0,
+      "sorted_samples_ms": {
+        "stock_ms": [
+          0.6468,
+          0.6841,
+          0.6852,
+          0.6854,
+          0.7044,
+          0.7093,
+          0.713,
+          0.715,
+          0.7152,
+          0.7154,
+          0.7242,
+          0.7366,
+          0.7486,
+          0.8167,
+          0.8647
+        ],
+        "rank64_ms": [
+          0.5969,
+          0.5998,
+          0.6011,
+          0.6027,
+          0.6045,
+          0.6091,
+          0.6238,
+          0.6376,
+          0.643,
+          0.6439,
+          0.6456,
+          0.6554,
+          0.6667,
+          0.6721,
+          0.7271
+        ]
+      }
+    }
+  ],
+  "production_speedup_demonstrated": false,
+  "limitations": "One fixed repeated synthetic query and one desktop run. 262144 represented tokens means 65536 pooled indexer vectors, not an occupied 256K model context or C5. Current Vulkan operation overhead loses at smaller sizes; the largest fixture is about 11 percent faster for this indexer subgraph only."
+}

@@ -2,9 +2,14 @@
 #include "llama-impl.h"
 #include "llama-memory-hybrid-idx.h"
 #include "llama-memory-recurrent.h"
+#include "qwen4exp-pca.h"
 
 #include <algorithm>
 #include <cinttypes>
+#include <cstdlib>
+
+llama_model_qwen4exp::llama_model_qwen4exp(const llama_model_params & params) : llama_model_base(params) {}
+llama_model_qwen4exp::~llama_model_qwen4exp() = default;
 
 // bad metadata must be catchable: GGML_ASSERT aborts the whole process
 static void qwen4exp_require_nonzero(const llama_model_loader & ml, llm_kv kid, uint32_t value) {
@@ -166,10 +171,39 @@ void llama_model_qwen4exp::load_arch_hparams(llama_model_loader & ml) {
         case 48: type = LLM_TYPE_A3B; break;
         default: type = LLM_TYPE_UNKNOWN;
     }
+
+    const char * map_path = std::getenv("LLAMA_QSA_PCA_MAP");
+    if (map_path && map_path[0]) {
+        const char * enabled = std::getenv("LLAMA_QSA_PCA_EXPERIMENTAL");
+        if (!enabled || std::string(enabled) != "1") {
+            throw std::runtime_error("QSA PCA: explicitly set LLAMA_QSA_PCA_EXPERIMENTAL=1 for this unvalidated experiment");
+        }
+        if (params.load_mtp) {
+            throw std::runtime_error("QSA PCA: MTP is not supported by this experimental map path");
+        }
+        if (hparams.n_layer() != 48 || hparams.indexer_head_size != 128 || hparams.indexer_n_head != 4 ||
+                hparams.indexer_kpool != 4 || hparams.indexer_top_k != 2048) {
+            throw std::runtime_error("QSA PCA: only the inspected Flash Next QSA geometry is supported");
+        }
+        experimental_qsa_pca = std::make_unique<qwen4exp_pca_maps>(map_path);
+        LLAMA_LOG_WARN("EXPERIMENTAL QSA PCA rank %u enabled; model quality and serving speed are unvalidated\n",
+                experimental_qsa_pca->rank());
+    }
 }
 
 void llama_model_qwen4exp::load_arch_tensors(llama_model_loader & ml) {
     LLAMA_LOAD_LOCALS;
+
+    if (experimental_qsa_pca) {
+        if (devices.size() > 1 || (!devices.empty() && devices.front().is_meta)) {
+            throw std::runtime_error("QSA PCA: experimental placement supports CPU or one physical GPU");
+        }
+        for (int layer = 3; layer < 48; layer += 4) {
+            if (!devices.empty()) {
+                experimental_qsa_pca->place(layer, devices.front().dev);
+            }
+        }
+    }
 
     const int64_t hc     = hparams.dsv4_hc_mult;
     const int64_t hc_dim = hc * n_embd;
@@ -753,6 +787,12 @@ ggml_tensor * llama_model_qwen4exp::graph::build_qsa_sel(
     const int64_t kpool   = inp_kpool->kpool;
     const int64_t n_pool  = inp_kpool->pool_cells->ne[0];
     const int64_t n_new   = inp_kpool->n_new;
+    const auto & typed_model = static_cast<const llama_model_qwen4exp &>(model);
+    ggml_tensor * projection = nullptr;
+    if (typed_model.experimental_qsa_pca) {
+        projection = cparams.offload_kqv ? typed_model.experimental_qsa_pca->get(il) : typed_model.experimental_qsa_pca->get_cpu(il);
+    }
+    const int64_t score_dim = projection ? projection->ne[1] : idx_dim;
 
     GGML_ASSERT(hparams.dsv4_compress_ratios[il] == kpool);
 
@@ -787,11 +827,23 @@ ggml_tensor * llama_model_qwen4exp::graph::build_qsa_sel(
     pooled_new = ggml_reshape_2d(ctx0, pooled_new, idx_dim, n_new);
     cb(pooled_new, "indexer_pool_k_new", il);
 
+    if (projection) {
+        pooled_new = ggml_mul_mat(ctx0, projection, pooled_new);
+        ggml_prec_set_acc(pooled_new, GGML_PREC_F32);
+        ggml_prec_set_src(pooled_new, GGML_PREC_F32, 1);
+        cb(pooled_new, "experimental_qsa_pca_k_new", il);
+        // Retain the native raw|pooled slot layout. Native invalidation/re-pooling
+        // rebuilds these projected values after edits; unused pooled lanes are zero.
+        if (score_dim < idx_dim) {
+            pooled_new = ggml_pad(ctx0, pooled_new, idx_dim - score_dim, 0, 0, 0);
+        }
+    }
+
     // scatter the fresh pooled keys into their rep rows, then gather all n_pool of them by cell:
     // the older pools come from the rows earlier ubatches wrote
     ggml_build_forward_expand(gf, kpool_cache.scatter_pooled(pooled_new, inp_kpool->new_pool_rep));
-    ggml_tensor * pooled = kpool_cache.gather_pooled(inp_kpool->pool_cells);
-    pooled = ggml_reshape_3d(ctx0, pooled, idx_dim, 1, n_pool);
+    ggml_tensor * pooled = kpool_cache.gather_pooled(inp_kpool->pool_cells, score_dim);
+    pooled = ggml_reshape_3d(ctx0, pooled, score_dim, 1, n_pool);
     cb(pooled, "indexer_k", il);
 
     ggml_tensor * q = build_lora_mm(model.layers[il].index_q_proj, cur);
@@ -802,11 +854,29 @@ ggml_tensor * llama_model_qwen4exp::graph::build_qsa_sel(
             ext_factor, attn_factor, beta_fast, beta_slow);
     cb(q, "indexer_q", il);
 
+    if (projection) {
+        q = ggml_mul_mat(ctx0, projection, ggml_reshape_2d(ctx0, q, idx_dim, n_idx_h * n_tokens));
+        ggml_prec_set_acc(q, GGML_PREC_F32);
+        ggml_prec_set_src(q, GGML_PREC_F32, 1);
+        q = ggml_reshape_3d(ctx0, q, score_dim, n_idx_h, n_tokens);
+        cb(q, "experimental_qsa_pca_q", il);
+        cb(pooled, "experimental_qsa_pca_k", il);
+    }
+
+    // Keep the original 1/sqrt(128) scale, including after projection. This is
+    // flat approximate QSA scoring, not hierarchical LSA selection.
     // the reference sums the rectified head scores unweighted, scaled by 1/sqrt(head_dim),
     // which is the lightning indexer with every head weight set to that scale
-    ggml_tensor * weights = ggml_fill(ctx0, ggml_new_tensor_2d(ctx0, GGML_TYPE_F32, n_idx_h, n_tokens), 1.0f/sqrtf((float) idx_dim));
-    ggml_tensor * score = ggml_lightning_indexer(ctx0, q, pooled, weights, inp_kpool->pool_mask); // [n_pool, n_tokens]
-    res->add_fused_node({LLM_FUSED_OP_LIGHTNING_INDEXER, score, il});
+    ggml_tensor * score;
+    if (projection && score_dim != 128) {
+        score = qwen4exp_pca_score(ctx0, q, pooled, inp_kpool->pool_mask, 1.0f/sqrtf((float) idx_dim));
+    } else {
+        ggml_tensor * weights = ggml_fill(ctx0, ggml_new_tensor_2d(ctx0, GGML_TYPE_F32, n_idx_h, n_tokens), 1.0f/sqrtf((float) idx_dim));
+        score = ggml_lightning_indexer(ctx0, q, pooled, weights, inp_kpool->pool_mask);
+        if (!projection) {
+            res->add_fused_node({LLM_FUSED_OP_LIGHTNING_INDEXER, score, il});
+        }
+    }
     cb(score, "indexer_score", il);
 
     const int64_t n_top_pool = std::min<int64_t>(n_pool, hparams.indexer_top_k / kpool);
