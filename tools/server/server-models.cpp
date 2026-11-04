@@ -729,8 +729,11 @@ void server_models::notify_sse(const std::string & event, const std::string & mo
 void server_models::load_models() {
     // Phase 1: load presets from all sources - pure I/O, no lock needed
     // 1. cached models
-    common_presets cached_models = ctx_preset.load_from_cache();
-    SRV_TRC("Loaded %zu cached model presets from %s\n", cached_models.size(), hf_cache::get_cache_path().c_str());
+    common_presets cached_models;
+    if (base_params.models_cache) {
+        cached_models = ctx_preset.load_from_cache();
+        SRV_TRC("Loaded %zu cached model presets from %s\n", cached_models.size(), hf_cache::get_cache_path().c_str());
+    }
     // 2. local models from --models-dir
     common_presets local_models;
     if (!base_params.models_dir.empty()) {

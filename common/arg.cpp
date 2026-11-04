@@ -3663,6 +3663,14 @@ common_params_context common_params_parser_init(common_params & params, llama_ex
         }
     ).set_examples({LLAMA_EXAMPLE_SERVER}).set_env("LLAMA_ARG_MODELS_AUTOLOAD"));
     add_opt(common_arg(
+        {"--models-cache"},
+        {"--no-models-cache"},
+        string_format("for router server, whether to list the models in the cache; downloads go to the cache either way (default: %s)", params.models_cache ? "enabled" : "disabled"),
+        [](common_params & params, bool value) {
+            params.models_cache = value;
+        }
+    ).set_examples({LLAMA_EXAMPLE_SERVER}).set_env("LLAMA_ARG_MODELS_CACHE"));
+    add_opt(common_arg(
         {"--jinja"},
         {"--no-jinja"},
         string_format("whether to use jinja template engine for chat (default: %s)", params.use_jinja ? "enabled" : "disabled"),

@@ -703,6 +703,7 @@ struct common_params {
     int models_max = 4;                 // maximum number of models to load simultaneously
     int models_memory_margin = 0;       // MiB of device memory to keep free when loading models (0 = no memory accounting)
     bool models_autoload = true;        // automatically load models when requested via the router server
+    bool models_cache = true;           // list the models in the cache for the router server
     std::string models_preset_hf = "";  // show a warning about remote presets on router loaded (if not empty)
 
     bool log_json = false;
