@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "model_id": "Qwen3.8-Flash-Next-Q4_K_XL-IQ4NL",
+  "architecture": "qwen4exp",
+  "identity_scope": "Observed GGUF metadata and checkpoint label only; not a full weight digest",
+  "layers": 48,
+  "attention_head_dimension": 256,
+  "attention_query_heads": 24,
+  "attention_kv_heads": 2,
+  "indexer_dimension": 128,
+  "indexer_heads": 4,
+  "pool_size": 4,
+  "token_budget": 2048,
+  "qsa_layers": [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47],
+  "teacher_score": "sum_h(relu(dot(query_h, pooled_key))) / sqrt(128)",
+  "calibration_tensor_stage": "post_norm_post_rope_pooled_indexer",
+  "observed_utc": "2026-11-04",
+  "model_integration": false
+}

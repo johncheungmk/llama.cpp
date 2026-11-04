@@ -1,5 +1,7 @@
 # AMD Vulkan proof-of-concept results
 
+These are the original phase-1 results. See [FLASH_NEXT.md](FLASH_NEXT.md) for the subsequent real-checkpoint calibration and improved search experiments.
+
 These are synthetic primitive measurements, **not Qwen3.8-Flash-Next inference results**. No language model or learned LSA map is loaded. There is no demonstrated end-to-end speedup.
 
 Tested on 2026-11-04 at 12:17 UTC: AMD Ryzen AI Max+ PRO 495 / Radeon 8065S (`gfx1151`), Windows 11 build 26200, AMD driver 32.0.32015.7029, Python 3.14.10. The official llama.cpp b11681 Vulkan DLLs were copied into an isolated development directory. Strict F32 flags disable F16 and cooperative-matrix paths in the experiment process. Production model settings were unchanged.

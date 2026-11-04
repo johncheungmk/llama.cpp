@@ -1,0 +1,491 @@
+{
+  "schema": 1,
+  "kind": "synthetic_flash_next_geometry_offline_experiment",
+  "numpy": "2.5.4",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.14.10",
+  "source_kind": "synthetic_fixture",
+  "real_model_capture": false,
+  "serving_integration": false,
+  "model_quality_validated": false,
+  "blas_threads": 1,
+  "projection_fit_seconds": 0.0038607000024057925,
+  "profile": {
+    "schema": 1,
+    "model_id": "Qwen3.8-Flash-Next-Q4_K_XL-IQ4NL",
+    "architecture": "qwen4exp",
+    "identity_scope": "Observed GGUF metadata and checkpoint label only; not a full weight digest",
+    "layers": 48,
+    "attention_head_dimension": 256,
+    "attention_query_heads": 24,
+    "attention_kv_heads": 2,
+    "indexer_dimension": 128,
+    "indexer_heads": 4,
+    "pool_size": 4,
+    "token_budget": 2048,
+    "qsa_layers": [
+      3,
+      7,
+      11,
+      15,
+      19,
+      23,
+      27,
+      31,
+      35,
+      39,
+      43,
+      47
+    ],
+    "teacher_score": "sum_h(relu(dot(query_h, pooled_key))) / sqrt(128)",
+    "calibration_tensor_stage": "post_norm_post_rope_pooled_indexer",
+    "observed_utc": "2026-11-04",
+    "model_integration": false
+  },
+  "started_utc": "2026-11-04T13:11:08.975034+00:00",
+  "source_sha256": {
+    "flash_next_calibration.py": "a9dd81d3d2bf8ddfbe7234699210550f8a9d0d5735de3f4dc6f3235d32e19b5a",
+    "run_flash_next_experiment.py": "769bc2091efdb300dc15643f9700be0112651a7acb7248bc9eeccdcf92071bfa",
+    "test_flash_next.py": "7176a6c61c5a2da2088abf6e16f529ec5b641555d9a2d30be8e3ad98c58e7a9a",
+    "ggml_vulkan.py": "b12f76e602950b27d886775572a6db71ae053cedcab334aa15652a1facb653e3",
+    "lsa_reference.py": "ac8974501161efe749bace82b621ece52b4c4e4f4981925cf45072297e45a8af",
+    "run_experiment.py": "a2d86a5a18b565c9ef2cde2d5b889964db4468c3be8dfdbcef9b41b55b5cc37d"
+  },
+  "qsa_cpu_search": [
+    {
+      "pools": 4096,
+      "represented_tokens": 16384,
+      "queries": 8,
+      "selected_pools": 512,
+      "candidate_budget": 4096,
+      "index_build_seconds": 0.0057336000027135015,
+      "exact_qsa_seconds": [
+        0.0001264000020455569,
+        0.00013140000010025688,
+        0.0001281000004382804,
+        0.0001289000028918963,
+        0.00012799999967683107,
+        0.00012549999883049168,
+        0.00012380000043776818,
+        0.00012369999967631884
+      ],
+      "bucket_qsa_seconds": [
+        0.0005063000025984365,
+        0.0005934000000706874,
+        0.0004867999996349681,
+        0.000495000000228174,
+        0.0005407999997260049,
+        0.000492600000143284,
+        0.0004842000016651582,
+        0.0004907999973511323
+      ],
+      "recall": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "exact_median_seconds": 0.00012720000086119398,
+      "bucket_median_seconds": 0.000493800000185729,
+      "search_stats": [
+        {
+          "buckets_scored": 0,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 0,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 0,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 0,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 0,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 0,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 0,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 0,
+          "keys_rescored": 4096
+        }
+      ]
+    },
+    {
+      "pools": 16384,
+      "represented_tokens": 65536,
+      "queries": 8,
+      "selected_pools": 512,
+      "candidate_budget": 4096,
+      "index_build_seconds": 0.025822799998422852,
+      "exact_qsa_seconds": [
+        0.00045540000064647757,
+        0.0004407999986142386,
+        0.00042780000148923136,
+        0.00043229999937466346,
+        0.0004336000019975472,
+        0.00043290000030538067,
+        0.0004302000015741214,
+        0.00044180000259075314
+      ],
+      "bucket_qsa_seconds": [
+        0.0007436000014422461,
+        0.0007265999993251171,
+        0.0007218000027933158,
+        0.0007289000022865366,
+        0.0007254000011016615,
+        0.0007313999994948972,
+        0.0007095000000845175,
+        0.0007203999994089827
+      ],
+      "recall": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "exact_median_seconds": 0.00043325000115146395,
+      "bucket_median_seconds": 0.0007260000002133893,
+      "search_stats": [
+        {
+          "buckets_scored": 512,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 512,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 512,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 512,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 512,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 512,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 512,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 512,
+          "keys_rescored": 4096
+        }
+      ]
+    },
+    {
+      "pools": 65536,
+      "represented_tokens": 262144,
+      "queries": 8,
+      "selected_pools": 512,
+      "candidate_budget": 4096,
+      "index_build_seconds": 0.12353230000007898,
+      "exact_qsa_seconds": [
+        0.004666100001486484,
+        0.004728899999463465,
+        0.004756400001497241,
+        0.004508099998929538,
+        0.0045343000019784085,
+        0.004527400000370108,
+        0.004462299999431707,
+        0.004499800001212861
+      ],
+      "bucket_qsa_seconds": [
+        0.0009968000013031997,
+        0.000885299999936251,
+        0.0010210999971604906,
+        0.0009261000013793819,
+        0.0009740999994392041,
+        0.0009184000009554438,
+        0.0009638999981689267,
+        0.0009304000013798941
+      ],
+      "recall": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.99609375
+      ],
+      "exact_median_seconds": 0.004530850001174258,
+      "bucket_median_seconds": 0.0009471499997744104,
+      "search_stats": [
+        {
+          "buckets_scored": 2048,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 2048,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 2048,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 2048,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 2048,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 2048,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 2048,
+          "keys_rescored": 4096
+        },
+        {
+          "buckets_scored": 2048,
+          "keys_rescored": 4096
+        }
+      ]
+    }
+  ],
+  "integrated_synthetic_vulkan": [
+    {
+      "tokens": 512,
+      "fixture_key_value_dimension": 128,
+      "attention_heads": 1,
+      "search_rank": 8,
+      "search_top_k": 32,
+      "candidate_budget": 256,
+      "method": "Sequential CPU selection, fresh index/query serialization and upload, graph compute/sync, and output readback under one wall clock. Prebuilt index/graph. Fixed repeated query. This is not model inference.",
+      "samples_seconds": {
+        "dense": [
+          0.0003026000013051089,
+          0.00029379999978118576,
+          0.0001878000002761837,
+          0.00014960000044084154,
+          0.00015309999798773788,
+          0.00014899999951012433,
+          0.00014519999967887998,
+          0.000247500000114087,
+          0.0002296999991813209,
+          0.0002500000009604264,
+          0.00026760000037029386
+        ],
+        "tree": [
+          0.0005772000004071742,
+          0.0007531999981438275,
+          0.00040889999945648015,
+          0.0003828000008070376,
+          0.0003589000007195864,
+          0.00037460000021383166,
+          0.0004048000009788666,
+          0.00040690000241738744,
+          0.0004590999997162726,
+          0.0008417000026383903,
+          0.0008326999995915685
+        ],
+        "bucket": [
+          0.00046829999701003544,
+          0.00041870000131893903,
+          0.0003302000004623551,
+          0.0003460000007180497,
+          0.00027380000028642826,
+          0.0002782000010483898,
+          0.0002812000020639971,
+          0.00023630000214325264,
+          0.0003612000000430271,
+          0.0003010000000358559,
+          0.0003552000016497914
+        ]
+      },
+      "medians_seconds": {
+        "dense": 0.0002296999991813209,
+        "tree": 0.00040889999945648015,
+        "bucket": 0.0003302000004623551
+      },
+      "cpu_reference_max_abs_error": {
+        "dense": 1.0916575554631436e-07,
+        "tree": 8.72469430035494e-09,
+        "bucket": 8.72469430035494e-09
+      },
+      "top32_recall": {
+        "tree": 1.0,
+        "bucket": 1.0
+      },
+      "sparse_dense_max_abs_error": {
+        "tree": 0.06051826477050781,
+        "bucket": 0.06051826477050781
+      }
+    },
+    {
+      "tokens": 4096,
+      "fixture_key_value_dimension": 128,
+      "attention_heads": 1,
+      "search_rank": 8,
+      "search_top_k": 32,
+      "candidate_budget": 256,
+      "method": "Sequential CPU selection, fresh index/query serialization and upload, graph compute/sync, and output readback under one wall clock. Prebuilt index/graph. Fixed repeated query. This is not model inference.",
+      "samples_seconds": {
+        "dense": [
+          0.00020729999960167333,
+          0.00018229999841423705,
+          0.00017010000010486692,
+          0.0001666999996814411,
+          0.000152900000102818,
+          0.00019379999866941944,
+          0.00021500000002561137,
+          0.00018379999892204069,
+          0.00015450000137207098,
+          0.00018980000095325522,
+          0.0001722999986668583
+        ],
+        "tree": [
+          0.000874699999258155,
+          0.0004761000018334016,
+          0.00042249999751220457,
+          0.0004761000018334016,
+          0.0004244999981892761,
+          0.00047649999760324135,
+          0.00046070000098552555,
+          0.0004766000020026695,
+          0.00043110000115120783,
+          0.0004838999993808102,
+          0.00043000000005122274
+        ],
+        "bucket": [
+          0.0006170999986352399,
+          0.0003944000018236693,
+          0.0002918999998655636,
+          0.00032130000181496143,
+          0.00030589999732910655,
+          0.00030609999885200523,
+          0.0003764000030059833,
+          0.0003953000014007557,
+          0.000360099998943042,
+          0.0003029999970749486,
+          0.00033460000122431666
+        ]
+      },
+      "medians_seconds": {
+        "dense": 0.00018229999841423705,
+        "tree": 0.0004761000018334016,
+        "bucket": 0.00033460000122431666
+      },
+      "cpu_reference_max_abs_error": {
+        "dense": 8.429098730111662e-08,
+        "tree": 2.4004817134049006e-08,
+        "bucket": 2.4004817134049006e-08
+      },
+      "top32_recall": {
+        "tree": 0.625,
+        "bucket": 0.625
+      },
+      "sparse_dense_max_abs_error": {
+        "tree": 0.06474500894546509,
+        "bucket": 0.06474500894546509
+      }
+    },
+    {
+      "tokens": 16384,
+      "fixture_key_value_dimension": 128,
+      "attention_heads": 1,
+      "search_rank": 8,
+      "search_top_k": 32,
+      "candidate_budget": 256,
+      "method": "Sequential CPU selection, fresh index/query serialization and upload, graph compute/sync, and output readback under one wall clock. Prebuilt index/graph. Fixed repeated query. This is not model inference.",
+      "samples_seconds": {
+        "dense": [
+          0.0004168999985267874,
+          0.00030019999758224003,
+          0.00029520000316551886,
+          0.0006451000008382834,
+          0.0002778999987640418,
+          0.0002981000034196768,
+          0.00029229999927338213,
+          0.0002599000035843346,
+          0.00025890000324579887,
+          0.00028529999690363184,
+          0.0002556999970693141
+        ],
+        "tree": [
+          0.0014574000015272759,
+          0.0009194000012939796,
+          0.0009863999985100236,
+          0.0011606000007304829,
+          0.0008034999991650693,
+          0.0009247999987564981,
+          0.0010075999998662155,
+          0.0008807000012893695,
+          0.000853000001370674,
+          0.0008982999970612582,
+          0.0008414999974775128
+        ],
+        "bucket": [
+          0.0008385000000998843,
+          0.0005669999991368968,
+          0.0006902000022819266,
+          0.000807399999757763,
+          0.00039119999928516336,
+          0.00034559999767225236,
+          0.0005683000017597806,
+          0.0004715000031865202,
+          0.000569200001336867,
+          0.0005812999988847878,
+          0.0004809000020031817
+        ]
+      },
+      "medians_seconds": {
+        "dense": 0.00029229999927338213,
+        "tree": 0.0009194000012939796,
+        "bucket": 0.0005683000017597806
+      },
+      "cpu_reference_max_abs_error": {
+        "dense": 2.6587357537799505e-08,
+        "tree": 9.425147551311852e-08,
+        "bucket": 9.425147551311852e-08
+      },
+      "top32_recall": {
+        "tree": 0.4375,
+        "bucket": 0.4375
+      },
+      "sparse_dense_max_abs_error": {
+        "tree": 0.07623147964477539,
+        "bucket": 0.07623147964477539
+      }
+    }
+  ],
+  "device": "AMD Radeon(TM) 8065S Graphics",
+  "dll_sha256": {
+    "ggml-base.dll": "efb98cc5877cc268c2bd537ee6fec2fb5c344862de4eb8c61ea62cf851247356",
+    "ggml.dll": "0fbe6ee85addcab3b264468895b76f5d1e97ef17bb309ce37a7bc93486ed3c71",
+    "ggml-vulkan.dll": "6f9222819e6888e3017ee1906a4db3b2de2833ec03782be45281bc4ba61d758b"
+  },
+  "finished_utc": "2026-11-04T13:11:14.795730+00:00"
+}

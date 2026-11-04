@@ -2,6 +2,8 @@
 
 This is a standalone, synthetic proof of concept in a llama.cpp fork. It runs latent projection, selected-row gathering, and attention through ggml's existing Vulkan backend on an AMD Radeon 8065S (`gfx1151`). It does **not** add LSA to llama-server or Qwen3.8-Flash-Next, and it does not demonstrate an end-to-end inference speedup.
 
+**Phase 2:** [FLASH_NEXT.md](FLASH_NEXT.md) adds a real-checkpoint CPU activation collector, experimentally calibrated maps for all 12 QSA layers, QSA-specific vectorized search, and measured synthetic selection-plus-attention latency. Real calibration and synthetic performance evidence are distinct. The production model still does not execute LSA.
+
 Base: llama.cpp b11681, commit `5e03a1ff450cae37a774684de55d14fb48b1f90b`. The experiment uses the public ggml C API; no llama.cpp core code, public headers, or dependent libraries were modified. No separate library fork is needed for this experiment.
 
 ## What is implemented
@@ -24,7 +26,7 @@ python -m unittest discover -s pocs/lsa-vulkan -p test_reference.py -v
 python pocs/lsa-vulkan/run_experiment.py --runtime C:\trusted\llama-b11681-vulkan --tokens 512 4096 16384 --repeats 11 --output new-results.json
 ```
 
-No pip packages, model downloads, SGLang, ROCm, compiler, administrator privileges, network access, or server configuration changes are needed to run the experiment. The runtime directory is supplied explicitly; the code does not download dependencies. On a shared GPU, wait until the serving workload is idle before running.
+No pip packages, model downloads, SGLang, ROCm, compiler, administrator privileges, network access, or server configuration changes are needed to run the original experiment above. The phase-2 tools additionally require NumPy. The runtime directory is supplied explicitly; the code does not download dependencies. On a shared GPU, wait until the serving workload is idle before running.
 
 The harness sets `GGML_VK_DISABLE_F16=1` and `GGML_VK_DISABLE_COOPMAT=1` in its own process to require the tested F32 path. These settings do not change other processes or persistent system settings. This is a numerical validation configuration, not a tuned production baseline. CLI sizes are capped at 16,384 tokens, with 64 MiB per tensor buffer and a 128 MiB combined replay-buffer check. These limits exclude driver/backend workspace, Python objects, and transient transfers; this is not a general-purpose sandbox. Existing output files are refused.
 
@@ -40,7 +42,7 @@ The tree's candidate cap bounds rescoring, not total internal-node traversal or 
 
 ## What is still required for Flash Next
 
-The [published LSA map release](https://github.com/Prefrontal-AI/latent-sparse-attention/releases/tag/d-lsa-weights-v1) inspected for this work supplies maps for Qwen3.8-27B and GLM5.3-Flash. No compatible trained Flash Next map was available in that release. A map trained and validated for the exact Flash Next layers and attention geometry is a prerequisite; the synthetic map here cannot substitute for it.
+The [published LSA map release](https://github.com/Prefrontal-AI/latent-sparse-attention/releases/tag/d-lsa-weights-v1) inspected for this work supplies maps for Qwen3.8-27B and GLM5.3-Flash. No compatible trained Flash Next map was available in that release. A map trained and validated for the exact Flash Next layers and attention geometry is a prerequisite; the original synthetic map cannot substitute for it. Phase 2 now fits experimental PCA maps from the real Flash Next checkpoint, but short-capture diagnostics do not establish long-context model quality or serving readiness.
 
 A serving implementation would then need model-specific graph integration, correct head/position handling, a persistent incrementally maintained index tied to the KV lifecycle, efficient selection/index transfer or GPU search, and proper synchronization across concurrent slots. It must pass dense equivalence tests when selecting all tokens, causal/prefix/eviction tests, and long-context quality evaluations with the trained map before matched model throughput/TTFT benchmarks. The current 16K synthetic run does not validate five 256K contexts or any tokens-per-second improvement.
 

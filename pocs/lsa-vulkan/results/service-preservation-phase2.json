@@ -1,0 +1,18 @@
+﻿{
+    "server_pid_unchanged":  true,
+    "launcher_hash_unchanged":  true,
+    "scheduled_task_state":  "Running",
+    "health":  "ok",
+    "slot_count":  5,
+    "contexts":  [
+                     262144,
+                     262144,
+                     262144,
+                     262144,
+                     262144
+                 ],
+    "all_slots_idle":  true,
+    "maps_created":  12,
+    "background_capture_processes":  0,
+    "checked_utc":  "2026-11-04T13:14:02.7196223Z"
+}
