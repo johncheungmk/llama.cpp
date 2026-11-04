@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "kind": "matched_native_model_logit_comparison",
+  "settings": {
+    "model_id": "Qwen3.8-Flash-Next-Q4_K_XL-IQ4NL",
+    "prompt_sha256": "1e6bfb7b5f3eae669b94f0875cd0a6715bea944abc19c6ef5b3ff5d81e67717f",
+    "tokens": 32,
+    "gpu_layers": 4,
+    "context_tokens": 512,
+    "batch_tokens": 256,
+    "cpu_threads": 12,
+    "attention_kv_types": "Q8_0/Q8_0",
+    "vocabulary_size": 248320,
+    "runtime_dll_sha256": {
+      "llama.dll": "5b468ec268b98b0f6b71741c1765c2359db0ea9ecd9b4bbd6fba08bcd232c272",
+      "ggml.dll": "b1ff35d813cba8791b9363cce289ba14e006ad00ea7538b01adfda77294c74f6",
+      "ggml-base.dll": "2ea06e0bfef9a30765ec9c62c57d3423ff791f6012dc432dfe26036943b77413",
+      "ggml-cpu-zen4.dll": "b73462f66b394a9c317822e5a621f72d2023f78f6be395f6efe5b67e312f20f1",
+      "ggml-vulkan.dll": "6f9222819e6888e3017ee1906a4db3b2de2833ec03782be45281bc4ba61d758b",
+      "libomp.dll": "a12116ba72d1d6820407cf30be23da04ce79d6bb8a71a5ee71759c5a1faa6f1c"
+    },
+    "source_sha256": "5374ef6f636efd9547d6b240e0eb3a394d90228948f72ada5cdfbf3745437a9e",
+    "support_source_sha256": {
+      "native_score_reference.py": "9022880c0f0841a858635e1fd2a8040de06060abd63541e037ac987d7e6131e2"
+    }
+  },
+  "baseline_archive_sha256": "b7f1ea826380d70fd4bbbd19297b0fc62367f9f44bca74ac0fd2e1764c7519f1",
+  "candidate_archive_sha256": "90fd195d3378fe79cdc96deb5672c0227d93f75ab4d864936c15f151f43c0d0c",
+  "baseline_map_sha256": null,
+  "candidate_map_sha256": "565311222cd2636c9ec5375a6a23c8b3d59d7fa086fa586201d97b67b716dbe3",
+  "teacher_forced_positions": 31,
+  "baseline_mean_nll": 4.351240453162652,
+  "candidate_mean_nll": 4.351240453162652,
+  "mean_nll_delta": 0.0,
+  "baseline_perplexity": 77.57463096327604,
+  "candidate_perplexity": 77.57463096327604,
+  "mean_kl_baseline_to_candidate": 0.0,
+  "logit_top1_agreement": 1.0,
+  "max_abs_logit_difference": 0.0,
+  "greedy_sequence_equal": true,
+  "baseline_prefill_seconds": 27.497727299996768,
+  "candidate_prefill_seconds": 27.34844869999506,
+  "baseline_decode_tokens_per_second": 0.1795570879675316,
+  "candidate_decode_tokens_per_second": 0.17817289874930362,
+  "candidate_serialized_state_refused": true,
+  "production_ready": false,
+  "limitations": "One synthetic public-example document; up to 32 teacher-forced next-token positions and 8/16 greedy steps. These are matched C-API model timings, not HTTP server throughput, task accuracy, RULER, or a 256K/C5 benchmark. Prefill includes final-layer activation callbacks and extra logit rows; model loading is excluded."
+}

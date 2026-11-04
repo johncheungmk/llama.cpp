@@ -135,7 +135,7 @@ ggml_tensor * qwen4exp_pca_score(ggml_context * ctx, ggml_tensor * query,
         ggml_tensor * q = ggml_view_2d(ctx, query, query->ne[0], query->ne[2], query->nb[2], head * query->nb[1]);
         ggml_tensor * score = ggml_mul_mat(ctx, keys, q);
         ggml_prec_set_acc(score, GGML_PREC_F32);
-        ggml_prec_set_src(score, GGML_PREC_F32, 1);
+        ggml_prec_set_src(score, GGML_PREC_F16, 1);
         score = ggml_relu(ctx, score);
         sum = sum ? ggml_add(ctx, sum, score) : score;
     }

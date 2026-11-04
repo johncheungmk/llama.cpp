@@ -1,0 +1,46 @@
+{
+  "source_sha256": {
+    "src/llama-model.h": "f86c307685b6e70a2635e2593a756c4750ebe52130474ad841256c48f4731f2f",
+    "src/models/qwen4exp-pca.cpp": "bcac3c41019e46471e39ac879946ab656e0d619bb7c78839a07b2596b1933f4f",
+    "tests/test-qwen4exp-pca.cpp": "db8dde247c0a2ed9e1eb045968e0e3ae88498e6d6cae039f5e74e13a22ad5a2e",
+    "src/llama-memory-hybrid-idx.cpp": "1e650e8c886277111eb5f97fea7edc23a0a25c80b4712f3deb3fde6d464d0bd4",
+    "src/llama-memory-hybrid-idx.h": "304d18884664f68197320cfa2cc5009bbb81d2d2366bcc4e87874a048d208b92",
+    "src/models/qwen4exp-pca.h": "def23c0b66821b4e448ce2eb27f6dc1ad5912da65a3bc1a1ea5e7569608385cc",
+    "src/llama-context.cpp": "6f253544d60f43b7dc41a60035c4549f8a0b50446335af2894475968239c5639",
+    "tests/bench-qwen4exp-pca.cpp": "6a77fc4f6c9033b76163df6cdded37b6899abd315fbb91c38c510d7502caf1fa",
+    "src/models/models.h": "b117bdf33d18acac651de676b87bb2c9c966917e489d8853eb7dc104e6669662",
+    "tests/CMakeLists.txt": "7140c2b509218ddfb6f853b2ff7a084b7dfcf61dd13e090987c33c0633e39a0a",
+    "src/models/qwen4exp.cpp": "4d593ac8d036c6a09717d47e7a80969db316a5ef441431195ce5874195b614bc"
+  },
+  "build_success": true,
+  "upstream_commit": "5e03a1ff450cae37a774684de55d14fb48b1f90b",
+  "compiled_vulkan_backend": false,
+  "scope": "Isolated CPU/Vulkan hybrid model and localhost server; no production switch",
+  "declared_operand_minimum": "FP16",
+  "cpu_unit_success": true,
+  "runtime_dll_sha256": {
+    "ggml.dll": "b1ff35d813cba8791b9363cce289ba14e006ad00ea7538b01adfda77294c74f6",
+    "ggml-vulkan.dll": "6f9222819e6888e3017ee1906a4db3b2de2833ec03782be45281bc4ba61d758b",
+    "ggml-base.dll": "2ea06e0bfef9a30765ec9c62c57d3423ff791f6012dc432dfe26036943b77413",
+    "llama.dll": "5b468ec268b98b0f6b71741c1765c2359db0ea9ecd9b4bbd6fba08bcd232c272",
+    "ggml-cpu-zen4.dll": "b73462f66b394a9c317822e5a621f72d2023f78f6be395f6efe5b67e312f20f1",
+    "libomp.dll": "a12116ba72d1d6820407cf30be23da04ce79d6bb8a71a5ee71759c5a1faa6f1c"
+  },
+  "vulkan_unit_success": true,
+  "windows_sdk": "10.0.26100",
+  "python_tests": 23,
+  "schema": 1,
+  "kind": "native_final_build",
+  "accumulator_minimum": "F32",
+  "vulkan_backend": "Existing official b11681 plugin",
+  "compiler": "MSVC 14.44.35207",
+  "dynamic_backends": true,
+  "observed_utc": "2026-11-04T16:28:02.5533617Z",
+  "shared_core": true,
+  "python_source_sha256": {
+    "capture_flash_next_cpu.py": "5374ef6f636efd9547d6b240e0eb3a394d90228948f72ada5cdfbf3745437a9e",
+    "native_score_reference.py": "9022880c0f0841a858635e1fd2a8040de06060abd63541e037ac987d7e6131e2",
+    "compare_model_quality.py": "a0095c393baa7323a73aa130a6053174cd49c2940064290ca257607de40e67ca",
+    "train_qsa_projection.py": "7296496daacd6cf1cdde8fa40787503bf482c7fc1e9b659ac7efa0a0e684e9dc"
+  }
+}

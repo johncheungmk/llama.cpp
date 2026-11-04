@@ -6,7 +6,7 @@ The experimental map path runs in the native model and an isolated localhost `ll
 
 The pinned b11681 source plus this branch builds with official Microsoft Build Tools, MSVC 14.44.35207 and Windows SDK 26100. The shared core uses dynamic backends, with the existing official b11681 Zen 4 CPU and Vulkan plugins. No new shader, Vulkan SDK, ROCm/SGLang installation or execution of Prefrontal code was required. Official portable Python 3.14.10 and the verified NumPy 2.5.4 wheel remain isolated in the development directory.
 
-The native loader test accepts a valid map and rejects ten malformed map cases. CPU/GPU constant placement and CPU-copy retention pass. Four-head projected scoring and causal masks pass on both CPU and Vulkan for ranks 16,32,64,128, with maximum absolute errors below 1.2e-6 against the independent double-precision calculation. Vulkan tests refuse unsupported operations and CPU fallback. All **21 Python test groups pass locally and on the AMD machine**.
+The native loader test accepts a valid map and rejects ten malformed map cases. CPU/GPU constant placement and CPU-copy retention pass. Four-head projected scoring and causal masks pass on both CPU and Vulkan for ranks 16,32,64,128 with both three and 32 queries. Three-query Vulkan vector fixtures use F32 operands; 32-query cooperative fixtures round both operands to FP16 and accumulate in F32. The entire fixture must match one consistent independent operand oracle within 1e-4. The largest observed oracle error is 6.324e-6; the largest difference from unrounded scores is 0.000736. Vulkan tests refuse unsupported operations and CPU fallback. All **23 Python test groups pass locally and on the AMD machine**. [Raw numerical cases](results/native-unit-results.json) and [final build/source/DLL fingerprints](results/native-build-final.json) are provided.
 
 ## Real 4K calibration
 
@@ -23,7 +23,13 @@ The independent distillation method starts from PCA and performs 50 training-onl
 
 The raw [final calibration](results/native-calibration-rank64.json) includes all layer/query diagnostics, training loss traces, source/capture/map hashes, and separate native-flat versus bucket-reranking recall. The older bucket diagnostic covers all 1,024 pools in this fixture and is trivially exact; it is not the native path's quality result. [Initial optimizer diagnostics](results/native-calibration-initial.json) are retained separately. Their historical source hash refers to the earlier update rule `learning_rate/max(1, gradient_norm)`; the revised rule uses a bounded normalized tangent displacement with training-only backtracking.
 
-The first rank64 native 4K prefill completed, but its collector failed with `Incomplete capture, decode status 0, errors []`: the graph renames the same pooled-key tensor to `experimental_qsa_pca_k`, while the collector expected its earlier `indexer_k` name. No final quality archive or generation timing from that run is claimed. A corrected collector and a fresh matched pair are required. The initial native build also requires block-aligned projection ranks with quantized indexer caches; its rank16/Q8_0 edge case is being fixed separately. The numerical helper's rank16 F32 test does not cover that cache edge case.
+The first rank64 native 4K prefill completed, but its collector failed with `Incomplete capture, decode status 0, errors []`: the graph renames the same pooled-key tensor to `experimental_qsa_pca_k`, while the collector expected its earlier `indexer_k` name. No final quality archive or generation timing from that run is claimed. The corrected collector uses the final name, freezes fingerprints at capture start, verifies Vulkan score residency and checks projection/scoring against strict rounded-operand oracles. Native operations explicitly permit FP16-or-better operands with F32 accumulation. A separate fix reads whole quantization blocks before trimming the rank16 prefix, resolving the initial rank16/Q8_0 alignment case. These fixes have passed the real-model control below. Fresh matched 4K baseline/projected runs are in progress; no completed pruning-quality model comparison is claimed yet.
+
+## All-visible native model control
+
+The final build was tested on the same 32-token held-out prefix with maps disabled and with the experimental rank16 map. Each run used one 512-token context, twelve CPU threads, four GPU weight layers, Q8_0 K/V, 256-token batch/ubatch, and eight greedy generation steps. All visible pools fit within the native selection budget, so this checks that the integrated path preserves model outputs when no pruning is necessary.
+
+Across 31 teacher-forced positions, the maximum full-vocabulary logit difference, NLL delta and KL divergence are **exactly zero**; logit top-1 agreement is 100%. The eight generated token IDs also match exactly. All twelve projected score buffers are Vulkan-resident; their largest error against the independent operand oracle is 3.087e-6. Projection checks, causal masks and rejection of full/sequence saved-state operations pass. This validates the quantized rank16 cache read and the all-visible output control, not long-context pruning quality. [Matched output comparison](results/native-control-quality.json), [baseline capture checks](results/native-control-baseline-capture.json), and [projected capture checks](results/native-control-rank16-capture.json) include the exact runtime and source fingerprints.
 
 ## Vulkan indexer overhead
 
@@ -31,12 +37,12 @@ This is a single-query synthetic subgraph test with four query heads, 128 dimens
 
 | Represented tokens | Pooled vectors | Stock fused indexer (ms) | Rank64 path (ms) |
 | ---: | ---: | ---: | ---: |
-| 4,096 | 1,024 | 0.0682 | 0.1158 |
-| 16,384 | 4,096 | 0.0942 | 0.1549 |
-| 65,536 | 16,384 | 0.1795 | 0.2162 |
-| 262,144 | 65,536 | 0.7150 | 0.6376 |
+| 4,096 | 1,024 | 0.0620 | 0.1050 |
+| 16,384 | 4,096 | 0.0871 | 0.1265 |
+| 65,536 | 16,384 | 0.1806 | 0.2165 |
+| 262,144 | 65,536 | 0.7113 | 0.6253 |
 
-The projected path is about 10.8% faster on the largest indexer fixture and slower on the other three. Existing operation/submission overhead limits short-context gains. The fixture lies entirely in the rank64 subspace; synthetic selection recall is 100%,100%,99.8047%,100%. The stock shader's FP16 dot4 arithmetic differs from the projected F32 operations and can change near-tied selections. These recall values do not replace the real-checkpoint calibration table. [Raw samples and exact timing scope](results/native-indexer-benchmark.json) are provided. No model tokens/sec speedup follows from these subgraph timings.
+The final projected path is about 12.1% faster on the largest indexer fixture and slower on the other three. Existing operation/submission overhead limits short-context gains. The fixture lies entirely in the rank64 subspace; synthetic selection recall is 100%,100%,99.8047%,100%. The stock shader's FP16 dot4 arithmetic differs from the projected vector path's F32 arithmetic and can change near-tied selections. These recall values do not replace the real-checkpoint calibration table. [Final raw samples and exact timing scope](results/native-indexer-benchmark-final.json) are provided; [initial measurements](results/native-indexer-benchmark.json) remain as historical evidence for the initial build. No model tokens/sec speedup follows from these subgraph timings.
 
 ## Native server smoke
 

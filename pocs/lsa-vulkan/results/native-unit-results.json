@@ -1,0 +1,159 @@
+{
+  "schema": 1,
+  "kind": "native_map_loader_and_projected_QSA_numerical_tests",
+  "malformed_map_cases_rejected": 10,
+  "cpu_gpu_constant_placement_verified": true,
+  "independent_cpu_copy_preserved": true,
+  "vulkan_cpu_fallback_allowed": false,
+  "operand_rounding_modes": {
+    "0": "F32 operands",
+    "1": "FP16 queries only",
+    "2": "FP16 keys only",
+    "3": "FP16 queries and keys"
+  },
+  "oracle_max_abs_error_limit": 0.0001,
+  "note": "One consistent operand oracle is required for every visible score in each fixture; masked scores must equal negative infinity. Full unrounded differences are reported separately. Three-query Vulkan fixtures use the vector path, 32-query fixtures exercise cooperative matmul.",
+  "rows": [
+    {
+      "backend": "CPU",
+      "rank": 16,
+      "tokens": 3,
+      "operand_rounding": 0,
+      "oracle_max_abs_error": 5.67893212e-07,
+      "full_F32_max_abs_error": 5.67893212e-07
+    },
+    {
+      "backend": "CPU",
+      "rank": 16,
+      "tokens": 32,
+      "operand_rounding": 0,
+      "oracle_max_abs_error": 6.06955433e-07,
+      "full_F32_max_abs_error": 6.06955433e-07
+    },
+    {
+      "backend": "CPU",
+      "rank": 32,
+      "tokens": 3,
+      "operand_rounding": 0,
+      "oracle_max_abs_error": 8.70111998e-07,
+      "full_F32_max_abs_error": 8.70111998e-07
+    },
+    {
+      "backend": "CPU",
+      "rank": 32,
+      "tokens": 32,
+      "operand_rounding": 0,
+      "oracle_max_abs_error": 9.18766276e-07,
+      "full_F32_max_abs_error": 9.18766276e-07
+    },
+    {
+      "backend": "CPU",
+      "rank": 64,
+      "tokens": 3,
+      "operand_rounding": 0,
+      "oracle_max_abs_error": 8.16992172e-07,
+      "full_F32_max_abs_error": 8.16992172e-07
+    },
+    {
+      "backend": "CPU",
+      "rank": 64,
+      "tokens": 32,
+      "operand_rounding": 0,
+      "oracle_max_abs_error": 1.12643764e-06,
+      "full_F32_max_abs_error": 1.12643764e-06
+    },
+    {
+      "backend": "CPU",
+      "rank": 128,
+      "tokens": 3,
+      "operand_rounding": 0,
+      "oracle_max_abs_error": 1.06477085e-06,
+      "full_F32_max_abs_error": 1.06477085e-06
+    },
+    {
+      "backend": "CPU",
+      "rank": 128,
+      "tokens": 32,
+      "operand_rounding": 0,
+      "oracle_max_abs_error": 1.27180608e-06,
+      "full_F32_max_abs_error": 1.27180608e-06
+    },
+    {
+      "backend": "Vulkan0",
+      "rank": 16,
+      "tokens": 3,
+      "operand_rounding": 0,
+      "oracle_max_abs_error": 3.90171316e-07,
+      "full_F32_max_abs_error": 3.90171316e-07
+    },
+    {
+      "backend": "Vulkan0",
+      "rank": 16,
+      "tokens": 32,
+      "operand_rounding": 3,
+      "oracle_max_abs_error": 9.11680239e-07,
+      "full_F32_max_abs_error": 0.000519943684
+    },
+    {
+      "backend": "Vulkan0",
+      "rank": 32,
+      "tokens": 3,
+      "operand_rounding": 0,
+      "oracle_max_abs_error": 5.65752327e-07,
+      "full_F32_max_abs_error": 5.65752327e-07
+    },
+    {
+      "backend": "Vulkan0",
+      "rank": 32,
+      "tokens": 32,
+      "operand_rounding": 3,
+      "oracle_max_abs_error": 1.07393438e-06,
+      "full_F32_max_abs_error": 0.000567611155
+    },
+    {
+      "backend": "Vulkan0",
+      "rank": 64,
+      "tokens": 3,
+      "operand_rounding": 0,
+      "oracle_max_abs_error": 1.08549374e-06,
+      "full_F32_max_abs_error": 1.08549374e-06
+    },
+    {
+      "backend": "Vulkan0",
+      "rank": 64,
+      "tokens": 32,
+      "operand_rounding": 3,
+      "oracle_max_abs_error": 2.44891669e-06,
+      "full_F32_max_abs_error": 0.000684915041
+    },
+    {
+      "backend": "Vulkan0",
+      "rank": 128,
+      "tokens": 3,
+      "operand_rounding": 0,
+      "oracle_max_abs_error": 1.14478267e-06,
+      "full_F32_max_abs_error": 1.14478267e-06
+    },
+    {
+      "backend": "Vulkan0",
+      "rank": 128,
+      "tokens": 32,
+      "operand_rounding": 3,
+      "oracle_max_abs_error": 6.3232769e-06,
+      "full_F32_max_abs_error": 0.000735518709
+    }
+  ],
+  "source_sha256": {
+    "tests/test-qwen4exp-pca.cpp": "db8dde247c0a2ed9e1eb045968e0e3ae88498e6d6cae039f5e74e13a22ad5a2e",
+    "src/models/qwen4exp-pca.cpp": "bcac3c41019e46471e39ac879946ab656e0d619bb7c78839a07b2596b1933f4f"
+  },
+  "runtime_dll_sha256": {
+    "ggml.dll": "b1ff35d813cba8791b9363cce289ba14e006ad00ea7538b01adfda77294c74f6",
+    "ggml-vulkan.dll": "6f9222819e6888e3017ee1906a4db3b2de2833ec03782be45281bc4ba61d758b",
+    "ggml-base.dll": "2ea06e0bfef9a30765ec9c62c57d3423ff791f6012dc432dfe26036943b77413",
+    "llama.dll": "5b468ec268b98b0f6b71741c1765c2359db0ea9ecd9b4bbd6fba08bcd232c272",
+    "ggml-cpu-zen4.dll": "b73462f66b394a9c317822e5a621f72d2023f78f6be395f6efe5b67e312f20f1",
+    "libomp.dll": "a12116ba72d1d6820407cf30be23da04ce79d6bb8a71a5ee71759c5a1faa6f1c"
+  },
+  "python_tests_passed_local_and_AMD": 23
+}

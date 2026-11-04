@@ -594,12 +594,20 @@ ggml_tensor * llama_memory_hybrid_idx_context::kpool_access::scatter_pooled(ggml
 }
 
 ggml_tensor * llama_memory_hybrid_idx_context::kpool_access::gather_pooled(ggml_tensor * idxs, int64_t width) const {
+    width = width == 0 ? pooled->ne[0] : width;
+    GGML_ASSERT(width > 0 && width <= pooled->ne[0]);
+    const int64_t block = ggml_blck_size(pooled->type);
+    const int64_t gather_width = ((width + block - 1) / block) * block;
     ggml_tensor * rows = pooled;
-    if (width != 0 && width != pooled->ne[0]) {
-        GGML_ASSERT(width > 0 && width <= pooled->ne[0] && width % ggml_blck_size(pooled->type) == 0);
-        rows = ggml_view_2d(ctx, pooled, width, pooled->ne[1], pooled->nb[1], 0);
+    if (gather_width != pooled->ne[0]) {
+        rows = ggml_view_2d(ctx, pooled, gather_width, pooled->ne[1], pooled->nb[1], 0);
     }
-    return ggml_get_rows(ctx, rows, idxs);
+    rows = ggml_get_rows(ctx, rows, idxs);
+    // Quantized cache views require whole blocks. Trim only after dequantization.
+    if (width != gather_width) {
+        rows = ggml_cont(ctx, ggml_view_2d(ctx, rows, width, rows->ne[1], rows->nb[1], 0));
+    }
+    return rows;
 }
 
 llama_memory_hybrid_idx_context::kpool_access llama_memory_hybrid_idx_context::get_kpool_access(

@@ -830,7 +830,7 @@ ggml_tensor * llama_model_qwen4exp::graph::build_qsa_sel(
     if (projection) {
         pooled_new = ggml_mul_mat(ctx0, projection, pooled_new);
         ggml_prec_set_acc(pooled_new, GGML_PREC_F32);
-        ggml_prec_set_src(pooled_new, GGML_PREC_F32, 1);
+        ggml_prec_set_src(pooled_new, GGML_PREC_F16, 1);
         cb(pooled_new, "experimental_qsa_pca_k_new", il);
         // Retain the native raw|pooled slot layout. Native invalidation/re-pooling
         // rebuilds these projected values after edits; unused pooled lanes are zero.
@@ -857,7 +857,7 @@ ggml_tensor * llama_model_qwen4exp::graph::build_qsa_sel(
     if (projection) {
         q = ggml_mul_mat(ctx0, projection, ggml_reshape_2d(ctx0, q, idx_dim, n_idx_h * n_tokens));
         ggml_prec_set_acc(q, GGML_PREC_F32);
-        ggml_prec_set_src(q, GGML_PREC_F32, 1);
+        ggml_prec_set_src(q, GGML_PREC_F16, 1);
         q = ggml_reshape_3d(ctx0, q, score_dim, n_idx_h, n_tokens);
         cb(q, "experimental_qsa_pca_q", il);
         cb(pooled, "experimental_qsa_pca_k", il);

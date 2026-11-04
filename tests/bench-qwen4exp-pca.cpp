@@ -30,7 +30,7 @@ public:
         if (projected) {
             q = ggml_mul_mat(ctx_, projection, q);
             ggml_prec_set_acc(q, GGML_PREC_F32);
-            ggml_prec_set_src(q, GGML_PREC_F32, 1);
+            ggml_prec_set_src(q, GGML_PREC_F16, 1);
         }
         q = ggml_reshape_3d(ctx_, q, width, 4, 1);
         auto * score = projected ? qwen4exp_pca_score(ctx_, q, keys, mask, 1.0f / std::sqrt(128.0f)) :

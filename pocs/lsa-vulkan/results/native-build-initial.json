@@ -1,0 +1,27 @@
+{
+  "compiler": "MSVC 14.44.35207",
+  "dynamic_backends": true,
+  "schema": 1,
+  "source_sha256": {
+    "src/llama-model.h": "f86c307685b6e70a2635e2593a756c4750ebe52130474ad841256c48f4731f2f",
+    "src/models/qwen4exp-pca.cpp": "1acb414a62f6507e1c9c899bf3a823ceb67b1672e2e80fecadbdd282229ad0ba",
+    "tests/test-qwen4exp-pca.cpp": "5ca9d0a693b06dbd2191f74d789f6cac4b3cdcf46ff85de301668318f42d6a1c",
+    "src/llama-memory-hybrid-idx.cpp": "83a00bc883a8e0dffd91ad8e8356ecba5951704633becbcd3126c8d48515da95",
+    "src/llama-memory-hybrid-idx.h": "304d18884664f68197320cfa2cc5009bbb81d2d2366bcc4e87874a048d208b92",
+    "src/models/qwen4exp-pca.h": "def23c0b66821b4e448ce2eb27f6dc1ad5912da65a3bc1a1ea5e7569608385cc",
+    "src/llama-context.cpp": "6f253544d60f43b7dc41a60035c4549f8a0b50446335af2894475968239c5639",
+    "tests/bench-qwen4exp-pca.cpp": "b6db73e9b43aa6ce1a779dcf39d5a07da64f7b0269012274d8d8d8caf1d56982",
+    "src/models/models.h": "b117bdf33d18acac651de676b87bb2c9c966917e489d8853eb7dc104e6669662",
+    "tests/CMakeLists.txt": "7140c2b509218ddfb6f853b2ff7a084b7dfcf61dd13e090987c33c0633e39a0a",
+    "src/models/qwen4exp.cpp": "0f5cd6c166f853b4d34992875f9830fa550a3bb58b9b401adc469ea0c9c23220"
+  },
+  "kind": "native_experimental_build_v6",
+  "scope": "CPU/Vulkan hybrid real model and localhost server; no full-GPU model throughput benchmark",
+  "vulkan_backend": "Existing official b11681 ggml-vulkan.dll",
+  "build_success": true,
+  "llama_dll_sha256": "daaa36ce69f327aa61b4095ffe63fe76e9160c1f209c877b90fb3a239b0f9d4d",
+  "shared_core": true,
+  "compiled_vulkan_backend": false,
+  "upstream_commit": "5e03a1ff450cae37a774684de55d14fb48b1f90b",
+  "windows_sdk": "10.0.26100"
+}

@@ -45,11 +45,12 @@ static void check_scores(bool vulkan, const std::string & map_path) {
         ggml_backend_tensor_get(maps.get_cpu(3), first, 0, sizeof(first));
         if (first[0] != 1.0f || first[1] != 0.0f) { throw std::runtime_error("CPU map copy was not preserved"); }
         for (int rank : {16, 32, 64, 128}) {
+          for (int tokens : {3, 32}) {
             auto * ctx = ggml_init({2 * 1024 * 1024, nullptr, true});
             if (!ctx) { throw std::runtime_error("test context allocation failed"); }
-            auto * q = ggml_new_tensor_3d(ctx, GGML_TYPE_F32, rank, 4, 3);
+            auto * q = ggml_new_tensor_3d(ctx, GGML_TYPE_F32, rank, 4, tokens);
             auto * k = ggml_new_tensor_3d(ctx, GGML_TYPE_F32, rank, 1, 97);
-            auto * m = ggml_new_tensor_2d(ctx, GGML_TYPE_F16, 97, 3);
+            auto * m = ggml_new_tensor_2d(ctx, GGML_TYPE_F16, 97, tokens);
             auto * score = qwen4exp_pca_score(ctx, q, k, m, 1.0f/std::sqrt(128.0f));
             auto * graph = ggml_new_graph_custom(ctx, 128, false);
             ggml_build_forward_expand(graph, score);
@@ -61,11 +62,11 @@ static void check_scores(bool vulkan, const std::string & map_path) {
             }
             auto * buffer = ggml_backend_alloc_ctx_tensors(ctx, backend);
             if (!buffer) { ggml_free(ctx); throw std::runtime_error("test buffer allocation failed"); }
-            std::vector<float> queries(rank * 4 * 3), keys(rank * 97), actual(97 * 3);
-            std::vector<ggml_fp16_t> mask(97 * 3);
+            std::vector<float> queries(rank * 4 * tokens), keys(rank * 97), actual(97 * tokens);
+            std::vector<ggml_fp16_t> mask(97 * tokens);
             for (size_t i = 0; i < queries.size(); ++i) { queries[i] = std::sin(float(i) * 0.031f); }
             for (size_t i = 0; i < keys.size(); ++i) { keys[i] = std::cos(float(i) * 0.017f); }
-            for (int token = 0; token < 3; ++token) {
+            for (int token = 0; token < tokens; ++token) {
                 const int visible = token == 0 ? 29 : token == 1 ? 59 : 97;
                 for (int key = 0; key < 97; ++key) { mask[token * 97 + key] = ggml_fp32_to_fp16(key < visible ? 0.0f : -INFINITY); }
             }
@@ -75,30 +76,40 @@ static void check_scores(bool vulkan, const std::string & map_path) {
             const auto status = ggml_backend_graph_compute(backend, graph);
             ggml_backend_synchronize(backend);
             ggml_backend_tensor_get(score, actual.data(), 0, actual.size() * sizeof(float));
-            double max_error = 0;
+            double max_errors[4] = {};
             bool valid = status == GGML_STATUS_SUCCESS;
-            for (int token = 0; token < 3; ++token) {
+            for (int token = 0; token < tokens; ++token) {
                 const int visible = token == 0 ? 29 : token == 1 ? 59 : 97;
                 for (int key = 0; key < 97; ++key) {
                     if (key >= visible) {
                         valid = valid && actual[token * 97 + key] == -INFINITY;
                         continue;
                     }
-                    double expected = 0;
-                    for (int head = 0; head < 4; ++head) {
-                        double dot = 0;
-                        for (int d = 0; d < rank; ++d) { dot += double(queries[(token * 4 + head) * rank + d]) * keys[key * rank + d]; }
-                        expected += std::max(0.0, dot);
+                    for (int mode = 0; mode < 4; ++mode) {
+                        double expected = 0;
+                        for (int head = 0; head < 4; ++head) {
+                            double dot = 0;
+                            for (int d = 0; d < rank; ++d) {
+                                float a = queries[(token * 4 + head) * rank + d], b = keys[key * rank + d];
+                                if (mode & 1) { a = ggml_fp16_to_fp32(ggml_fp32_to_fp16(a)); }
+                                if (mode & 2) { b = ggml_fp16_to_fp32(ggml_fp32_to_fp16(b)); }
+                                dot += double(a) * b;
+                            }
+                            expected += std::max(0.0, dot);
+                        }
+                        const double error = std::abs(actual[token * 97 + key] - expected / std::sqrt(128.0));
+                        valid = valid && std::isfinite(error);
+                        max_errors[mode] = std::max(max_errors[mode], error);
                     }
-                    const double error = std::abs(actual[token * 97 + key] - expected / std::sqrt(128.0));
-                    valid = valid && std::isfinite(error) && error <= 1e-3;
-                    max_error = std::max(max_error, error);
                 }
             }
             ggml_backend_buffer_free(buffer);
             ggml_free(ctx);
-            if (!valid) { throw std::runtime_error("projected QSA score/mask numerical check failed"); }
-            std::printf("QSA_PCA_SCORE_PASS backend=%s rank=%d max_abs_error=%.9g\n", ggml_backend_name(backend), rank, max_error);
+            int mode = 0;
+            if (vulkan) { mode = int(std::min_element(max_errors, max_errors + 4) - max_errors); }
+            if (!valid || max_errors[mode] > 1e-4) { throw std::runtime_error("projected QSA score/mask numerical check failed"); }
+            std::printf("QSA_PCA_SCORE_PASS backend=%s rank=%d tokens=%d operand_rounding=%d oracle_max_abs_error=%.9g full_F32_max_abs_error=%.9g\n", ggml_backend_name(backend), rank, tokens, mode, max_errors[mode], max_errors[0]);
+          }
         }
     } catch (...) {
         ggml_backend_free(backend);

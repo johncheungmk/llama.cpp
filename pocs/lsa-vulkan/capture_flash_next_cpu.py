@@ -1,8 +1,8 @@
-"""Bounded b11681 Windows CPU-only capture of one Flash Next QSA layer.
+"""Bounded b11681 Windows Flash Next QSA capture and optional logit validation.
 
 Uses a separate model/context; never attaches to a serving process. The scheduler
-callback deliberately stops evaluation once the requested indexer tensors exist.
-This does not produce logits or measure model inference performance.
+callback stops evaluation after requested indexer tensors by default. Explicit
+options enable hybrid Vulkan offload, complete logits and bounded generation.
 """
 import argparse
 import ctypes as C
@@ -17,7 +17,7 @@ import struct
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
 os.environ["OMP_NUM_THREADS"] = "4"
 import numpy as np
-from native_score_reference import verify as verify_scores
+from native_score_reference import verify as verify_scores, verify_projection
 
 P, SZ, I = C.c_void_p, C.c_size_t, C.c_int32
 
@@ -83,7 +83,23 @@ def enforce_limits(commit_gib=6):
     return kernel, job  # retain the handle until process exit
 
 
+def capture_tensor_names(layers, projected):
+    names = {f"indexer_{kind}-{layer}": (layer, label)
+             for layer in layers for kind, label in (("k", "keys"), ("q", "queries"), ("score", "scores"))}
+    if projected:
+        for layer in layers:
+            # Native cb() names the same pooled tensor twice; its final name wins.
+            del names[f"indexer_k-{layer}"]
+            names[f"experimental_qsa_pca_k-{layer}"] = (layer, "keys")
+            names[f"experimental_qsa_pca_q-{layer}"] = (layer, "projected_queries")
+            names[f"indexer_pool_k_new-{layer}"] = (layer, "new_keys")
+            names[f"experimental_qsa_pca_k_new-{layer}"] = (layer, "projected_new_keys")
+    return names
+
+
 def capture(args):
+    capture_source_sha256 = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+    support_source_sha256 = {"native_score_reference.py": hashlib.sha256((Path(__file__).parent / "native_score_reference.py").read_bytes()).hexdigest()}
     os.environ["OMP_NUM_THREADS"] = str(args.threads)
     limits = enforce_limits(args.commit_limit)
     if (C.sizeof(ModelParams), C.sizeof(ContextParams), C.sizeof(Batch)) != (80, 168, 56):
@@ -187,13 +203,7 @@ def capture(args):
         collected, collected_host, errors = {}, {}, []
         capture_final = False
         layers = list(range(3, 48, 4)) if args.all_layers else [args.layer]
-        names = {f"indexer_{kind}-{layer}": (layer, label)
-                 for layer in layers for kind, label in (("k", "keys"), ("q", "queries"), ("score", "scores"))}
-        if expected_maps:
-            for layer in layers:
-                names[f"experimental_qsa_pca_q-{layer}"] = (layer, "projected_queries")
-                names[f"indexer_pool_k_new-{layer}"] = (layer, "new_keys")
-                names[f"experimental_qsa_pca_k_new-{layer}"] = (layer, "projected_new_keys")
+        names = capture_tensor_names(layers, bool(expected_maps))
         buffer_is_host = bind(base, "ggml_backend_buffer_is_host", C.c_bool, [P])
         callback_type = C.CFUNCTYPE(C.c_bool, P, C.c_bool, P)
         @callback_type
@@ -270,15 +280,15 @@ def capture(args):
                 score_queries = collected[(layer, "projected_queries")].reshape(final_count, 4, key_dimension)
                 new_keys = collected[(layer, "new_keys")].reshape(-1, 128)
                 projected_new = collected[(layer, "projected_new_keys")].reshape(-1, key_dimension)
-                expected_q, expected_k = queries @ expected_maps[layer].T, new_keys @ expected_maps[layer].T
-                if not np.allclose(score_queries, expected_q, rtol=1e-3, atol=1e-3) or not np.allclose(projected_new, expected_k, rtol=1e-3, atol=1e-3):
-                    raise RuntimeError("native projection differs from the exported map")
-                projection_errors = {"query_max_abs_error": float(np.max(np.abs(score_queries - expected_q))),
-                                     "new_key_max_abs_error": float(np.max(np.abs(projected_new - expected_k)))}
+                projection_errors = {"queries": verify_projection(queries, expected_maps[layer], score_queries, bool(args.gpu_layers)),
+                                     "new_keys": verify_projection(new_keys, expected_maps[layer], projected_new, bool(args.gpu_layers))}
             else:
                 score_queries = queries
             half_tile = not collected_host[(layer, "scores")] and (not expected_maps or key_dimension == 128)
-            score_check = verify_scores(score_queries, keys, native_scores, expected_visible, half_tile)
+            score_check = verify_scores(score_queries, keys, native_scores, expected_visible, half_tile,
+                                        mixed_operands=bool(expected_maps and args.gpu_layers and key_dimension != 128))
+            if expected_maps and args.gpu_layers and collected_host[(layer, "scores")]:
+                raise RuntimeError("experimental hybrid validation requires Vulkan-resident scores")
             score_error = score_check["max_abs_error"]
             positions = np.arange(args.query_step - 1, final_count, args.query_step)
             global_positions = positions + final_offset
@@ -291,6 +301,8 @@ def capture(args):
                         "checkpoint_identity": "caller label and verified metadata, not full weight hash",
                         "scope": "One independent contiguous text sequence; no prefix reuse, eviction or mixed sequences",
                         "native_qsa_score_max_abs_error": score_error, "native_causal_pool_mask_verified": True,
+                        "native_score_buffer_is_host": collected_host[(layer, "scores")],
+                        "source_sha256": capture_source_sha256, "support_source_sha256": support_source_sha256,
                         "score_arithmetic_check": score_check, "projection_reference": projection_errors,
                         "query_positions": global_positions.tolist(), "prefill_seconds": prefill_seconds,
                         "gpu_layers": args.gpu_layers, "private_commit_limit_gib": args.commit_limit,
@@ -338,8 +350,8 @@ def capture(args):
                        "context_tokens": params.n_ctx, "batch_tokens": 256, "cpu_threads": args.threads,
                        "offload_kqv": bool(args.gpu_layers), "op_offload": bool(args.gpu_layers),
                        "attention_kv_types": "Q8_0/Q8_0", "vocabulary_size": vocab_size,
-                       "source_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-                       "support_source_sha256": {"native_score_reference.py": hashlib.sha256((Path(__file__).parent / "native_score_reference.py").read_bytes()).hexdigest()},
+                       "source_sha256": capture_source_sha256,
+                       "support_source_sha256": support_source_sha256,
                        "runtime_dll_sha256": {name: hashlib.sha256((runtime / name).read_bytes()).hexdigest() for name in ("llama.dll", "ggml.dll", "ggml-base.dll", "ggml-cpu-zen4.dll", "ggml-vulkan.dll", "libomp.dll")},
                        "prefill_seconds": prefill_seconds, "decode_step_seconds": step_seconds,
                        "generated_token_ids": generated, "decode_tokens_per_second": len(step_seconds) / sum(step_seconds) if step_seconds else None,

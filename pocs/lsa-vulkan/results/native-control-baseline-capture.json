@@ -1,0 +1,554 @@
+[
+  {
+    "schema": 1,
+    "source_kind": "real_model_capture",
+    "stage": "post_norm_post_rope_pooled_indexer",
+    "model_id": "Qwen3.8-Flash-Next-Q4_K_XL-IQ4NL",
+    "layer": 3,
+    "document_ids": [
+      "public-short-heldout-final"
+    ],
+    "prompt_sha256": "1e6bfb7b5f3eae669b94f0875cd0a6715bea944abc19c6ef5b3ff5d81e67717f",
+    "tokens": 32,
+    "decode_status": 0,
+    "intentional_early_abort": false,
+    "attention_kv_types": "Q8_0/Q8_0",
+    "flash_attention": true,
+    "device": "CPU/Vulkan hybrid, n_gpu_layers=4, KQV offload enabled",
+    "checkpoint_identity": "caller label and verified metadata, not full weight hash",
+    "scope": "One independent contiguous text sequence; no prefix reuse, eviction or mixed sequences",
+    "native_qsa_score_max_abs_error": 0.0031588322975437677,
+    "native_causal_pool_mask_verified": true,
+    "native_score_buffer_is_host": false,
+    "source_sha256": "5374ef6f636efd9547d6b240e0eb3a394d90228948f72ada5cdfbf3745437a9e",
+    "support_source_sha256": {
+      "native_score_reference.py": "9022880c0f0841a858635e1fd2a8040de06060abd63541e037ac987d7e6131e2"
+    },
+    "score_arithmetic_check": {
+      "max_abs_error": 0.0031588322975437677,
+      "max_allowed_error_bound": 0.10999883609952234,
+      "max_error_to_bound_ratio": 0.0304841465657449,
+      "arithmetic": "stock_Vulkan_f16_dot4_with_f32_accumulation"
+    },
+    "projection_reference": null,
+    "query_positions": [
+      7,
+      15,
+      23,
+      31
+    ],
+    "prefill_seconds": 27.497727299996768,
+    "gpu_layers": 4,
+    "private_commit_limit_gib": 40,
+    "cpu_threads": 12,
+    "working_set_limit_gib": 8,
+    "watchdog_seconds": 600,
+    "native_map_sha256": null
+  },
+  {
+    "schema": 1,
+    "source_kind": "real_model_capture",
+    "stage": "post_norm_post_rope_pooled_indexer",
+    "model_id": "Qwen3.8-Flash-Next-Q4_K_XL-IQ4NL",
+    "layer": 7,
+    "document_ids": [
+      "public-short-heldout-final"
+    ],
+    "prompt_sha256": "1e6bfb7b5f3eae669b94f0875cd0a6715bea944abc19c6ef5b3ff5d81e67717f",
+    "tokens": 32,
+    "decode_status": 0,
+    "intentional_early_abort": false,
+    "attention_kv_types": "Q8_0/Q8_0",
+    "flash_attention": true,
+    "device": "CPU/Vulkan hybrid, n_gpu_layers=4, KQV offload enabled",
+    "checkpoint_identity": "caller label and verified metadata, not full weight hash",
+    "scope": "One independent contiguous text sequence; no prefix reuse, eviction or mixed sequences",
+    "native_qsa_score_max_abs_error": 0.0031040643826081293,
+    "native_causal_pool_mask_verified": true,
+    "native_score_buffer_is_host": false,
+    "source_sha256": "5374ef6f636efd9547d6b240e0eb3a394d90228948f72ada5cdfbf3745437a9e",
+    "support_source_sha256": {
+      "native_score_reference.py": "9022880c0f0841a858635e1fd2a8040de06060abd63541e037ac987d7e6131e2"
+    },
+    "score_arithmetic_check": {
+      "max_abs_error": 0.0031040643826081293,
+      "max_allowed_error_bound": 0.12663260165854853,
+      "max_error_to_bound_ratio": 0.027217070353318665,
+      "arithmetic": "stock_Vulkan_f16_dot4_with_f32_accumulation"
+    },
+    "projection_reference": null,
+    "query_positions": [
+      7,
+      15,
+      23,
+      31
+    ],
+    "prefill_seconds": 27.497727299996768,
+    "gpu_layers": 4,
+    "private_commit_limit_gib": 40,
+    "cpu_threads": 12,
+    "working_set_limit_gib": 8,
+    "watchdog_seconds": 600,
+    "native_map_sha256": null
+  },
+  {
+    "schema": 1,
+    "source_kind": "real_model_capture",
+    "stage": "post_norm_post_rope_pooled_indexer",
+    "model_id": "Qwen3.8-Flash-Next-Q4_K_XL-IQ4NL",
+    "layer": 11,
+    "document_ids": [
+      "public-short-heldout-final"
+    ],
+    "prompt_sha256": "1e6bfb7b5f3eae669b94f0875cd0a6715bea944abc19c6ef5b3ff5d81e67717f",
+    "tokens": 32,
+    "decode_status": 0,
+    "intentional_early_abort": false,
+    "attention_kv_types": "Q8_0/Q8_0",
+    "flash_attention": true,
+    "device": "CPU/Vulkan hybrid, n_gpu_layers=4, KQV offload enabled",
+    "checkpoint_identity": "caller label and verified metadata, not full weight hash",
+    "scope": "One independent contiguous text sequence; no prefix reuse, eviction or mixed sequences",
+    "native_qsa_score_max_abs_error": 0.003114243067988909,
+    "native_causal_pool_mask_verified": true,
+    "native_score_buffer_is_host": false,
+    "source_sha256": "5374ef6f636efd9547d6b240e0eb3a394d90228948f72ada5cdfbf3745437a9e",
+    "support_source_sha256": {
+      "native_score_reference.py": "9022880c0f0841a858635e1fd2a8040de06060abd63541e037ac987d7e6131e2"
+    },
+    "score_arithmetic_check": {
+      "max_abs_error": 0.003114243067988909,
+      "max_allowed_error_bound": 0.10914980486598132,
+      "max_error_to_bound_ratio": 0.029684991374730286,
+      "arithmetic": "stock_Vulkan_f16_dot4_with_f32_accumulation"
+    },
+    "projection_reference": null,
+    "query_positions": [
+      7,
+      15,
+      23,
+      31
+    ],
+    "prefill_seconds": 27.497727299996768,
+    "gpu_layers": 4,
+    "private_commit_limit_gib": 40,
+    "cpu_threads": 12,
+    "working_set_limit_gib": 8,
+    "watchdog_seconds": 600,
+    "native_map_sha256": null
+  },
+  {
+    "schema": 1,
+    "source_kind": "real_model_capture",
+    "stage": "post_norm_post_rope_pooled_indexer",
+    "model_id": "Qwen3.8-Flash-Next-Q4_K_XL-IQ4NL",
+    "layer": 15,
+    "document_ids": [
+      "public-short-heldout-final"
+    ],
+    "prompt_sha256": "1e6bfb7b5f3eae669b94f0875cd0a6715bea944abc19c6ef5b3ff5d81e67717f",
+    "tokens": 32,
+    "decode_status": 0,
+    "intentional_early_abort": false,
+    "attention_kv_types": "Q8_0/Q8_0",
+    "flash_attention": true,
+    "device": "CPU/Vulkan hybrid, n_gpu_layers=4, KQV offload enabled",
+    "checkpoint_identity": "caller label and verified metadata, not full weight hash",
+    "scope": "One independent contiguous text sequence; no prefix reuse, eviction or mixed sequences",
+    "native_qsa_score_max_abs_error": 0.0034499597018626815,
+    "native_causal_pool_mask_verified": true,
+    "native_score_buffer_is_host": false,
+    "source_sha256": "5374ef6f636efd9547d6b240e0eb3a394d90228948f72ada5cdfbf3745437a9e",
+    "support_source_sha256": {
+      "native_score_reference.py": "9022880c0f0841a858635e1fd2a8040de06060abd63541e037ac987d7e6131e2"
+    },
+    "score_arithmetic_check": {
+      "max_abs_error": 0.0034499597018626815,
+      "max_allowed_error_bound": 0.10813325967496053,
+      "max_error_to_bound_ratio": 0.03316093744861537,
+      "arithmetic": "stock_Vulkan_f16_dot4_with_f32_accumulation"
+    },
+    "projection_reference": null,
+    "query_positions": [
+      7,
+      15,
+      23,
+      31
+    ],
+    "prefill_seconds": 27.497727299996768,
+    "gpu_layers": 4,
+    "private_commit_limit_gib": 40,
+    "cpu_threads": 12,
+    "working_set_limit_gib": 8,
+    "watchdog_seconds": 600,
+    "native_map_sha256": null
+  },
+  {
+    "schema": 1,
+    "source_kind": "real_model_capture",
+    "stage": "post_norm_post_rope_pooled_indexer",
+    "model_id": "Qwen3.8-Flash-Next-Q4_K_XL-IQ4NL",
+    "layer": 19,
+    "document_ids": [
+      "public-short-heldout-final"
+    ],
+    "prompt_sha256": "1e6bfb7b5f3eae669b94f0875cd0a6715bea944abc19c6ef5b3ff5d81e67717f",
+    "tokens": 32,
+    "decode_status": 0,
+    "intentional_early_abort": false,
+    "attention_kv_types": "Q8_0/Q8_0",
+    "flash_attention": true,
+    "device": "CPU/Vulkan hybrid, n_gpu_layers=4, KQV offload enabled",
+    "checkpoint_identity": "caller label and verified metadata, not full weight hash",
+    "scope": "One independent contiguous text sequence; no prefix reuse, eviction or mixed sequences",
+    "native_qsa_score_max_abs_error": 0.002517911605851353,
+    "native_causal_pool_mask_verified": true,
+    "native_score_buffer_is_host": false,
+    "source_sha256": "5374ef6f636efd9547d6b240e0eb3a394d90228948f72ada5cdfbf3745437a9e",
+    "support_source_sha256": {
+      "native_score_reference.py": "9022880c0f0841a858635e1fd2a8040de06060abd63541e037ac987d7e6131e2"
+    },
+    "score_arithmetic_check": {
+      "max_abs_error": 0.002517911605851353,
+      "max_allowed_error_bound": 0.10820302203723013,
+      "max_error_to_bound_ratio": 0.023896620010812962,
+      "arithmetic": "stock_Vulkan_f16_dot4_with_f32_accumulation"
+    },
+    "projection_reference": null,
+    "query_positions": [
+      7,
+      15,
+      23,
+      31
+    ],
+    "prefill_seconds": 27.497727299996768,
+    "gpu_layers": 4,
+    "private_commit_limit_gib": 40,
+    "cpu_threads": 12,
+    "working_set_limit_gib": 8,
+    "watchdog_seconds": 600,
+    "native_map_sha256": null
+  },
+  {
+    "schema": 1,
+    "source_kind": "real_model_capture",
+    "stage": "post_norm_post_rope_pooled_indexer",
+    "model_id": "Qwen3.8-Flash-Next-Q4_K_XL-IQ4NL",
+    "layer": 23,
+    "document_ids": [
+      "public-short-heldout-final"
+    ],
+    "prompt_sha256": "1e6bfb7b5f3eae669b94f0875cd0a6715bea944abc19c6ef5b3ff5d81e67717f",
+    "tokens": 32,
+    "decode_status": 0,
+    "intentional_early_abort": false,
+    "attention_kv_types": "Q8_0/Q8_0",
+    "flash_attention": true,
+    "device": "CPU/Vulkan hybrid, n_gpu_layers=4, KQV offload enabled",
+    "checkpoint_identity": "caller label and verified metadata, not full weight hash",
+    "scope": "One independent contiguous text sequence; no prefix reuse, eviction or mixed sequences",
+    "native_qsa_score_max_abs_error": 0.0030900004046650054,
+    "native_causal_pool_mask_verified": true,
+    "native_score_buffer_is_host": false,
+    "source_sha256": "5374ef6f636efd9547d6b240e0eb3a394d90228948f72ada5cdfbf3745437a9e",
+    "support_source_sha256": {
+      "native_score_reference.py": "9022880c0f0841a858635e1fd2a8040de06060abd63541e037ac987d7e6131e2"
+    },
+    "score_arithmetic_check": {
+      "max_abs_error": 0.0030900004046650054,
+      "max_allowed_error_bound": 0.1180464680992067,
+      "max_error_to_bound_ratio": 0.028489426432819563,
+      "arithmetic": "stock_Vulkan_f16_dot4_with_f32_accumulation"
+    },
+    "projection_reference": null,
+    "query_positions": [
+      7,
+      15,
+      23,
+      31
+    ],
+    "prefill_seconds": 27.497727299996768,
+    "gpu_layers": 4,
+    "private_commit_limit_gib": 40,
+    "cpu_threads": 12,
+    "working_set_limit_gib": 8,
+    "watchdog_seconds": 600,
+    "native_map_sha256": null
+  },
+  {
+    "schema": 1,
+    "source_kind": "real_model_capture",
+    "stage": "post_norm_post_rope_pooled_indexer",
+    "model_id": "Qwen3.8-Flash-Next-Q4_K_XL-IQ4NL",
+    "layer": 27,
+    "document_ids": [
+      "public-short-heldout-final"
+    ],
+    "prompt_sha256": "1e6bfb7b5f3eae669b94f0875cd0a6715bea944abc19c6ef5b3ff5d81e67717f",
+    "tokens": 32,
+    "decode_status": 0,
+    "intentional_early_abort": false,
+    "attention_kv_types": "Q8_0/Q8_0",
+    "flash_attention": true,
+    "device": "CPU/Vulkan hybrid, n_gpu_layers=4, KQV offload enabled",
+    "checkpoint_identity": "caller label and verified metadata, not full weight hash",
+    "scope": "One independent contiguous text sequence; no prefix reuse, eviction or mixed sequences",
+    "native_qsa_score_max_abs_error": 0.002734310494838965,
+    "native_causal_pool_mask_verified": true,
+    "native_score_buffer_is_host": false,
+    "source_sha256": "5374ef6f636efd9547d6b240e0eb3a394d90228948f72ada5cdfbf3745437a9e",
+    "support_source_sha256": {
+      "native_score_reference.py": "9022880c0f0841a858635e1fd2a8040de06060abd63541e037ac987d7e6131e2"
+    },
+    "score_arithmetic_check": {
+      "max_abs_error": 0.002734310494838965,
+      "max_allowed_error_bound": 0.10871747910494635,
+      "max_error_to_bound_ratio": 0.027872404067013204,
+      "arithmetic": "stock_Vulkan_f16_dot4_with_f32_accumulation"
+    },
+    "projection_reference": null,
+    "query_positions": [
+      7,
+      15,
+      23,
+      31
+    ],
+    "prefill_seconds": 27.497727299996768,
+    "gpu_layers": 4,
+    "private_commit_limit_gib": 40,
+    "cpu_threads": 12,
+    "working_set_limit_gib": 8,
+    "watchdog_seconds": 600,
+    "native_map_sha256": null
+  },
+  {
+    "schema": 1,
+    "source_kind": "real_model_capture",
+    "stage": "post_norm_post_rope_pooled_indexer",
+    "model_id": "Qwen3.8-Flash-Next-Q4_K_XL-IQ4NL",
+    "layer": 31,
+    "document_ids": [
+      "public-short-heldout-final"
+    ],
+    "prompt_sha256": "1e6bfb7b5f3eae669b94f0875cd0a6715bea944abc19c6ef5b3ff5d81e67717f",
+    "tokens": 32,
+    "decode_status": 0,
+    "intentional_early_abort": false,
+    "attention_kv_types": "Q8_0/Q8_0",
+    "flash_attention": true,
+    "device": "CPU/Vulkan hybrid, n_gpu_layers=4, KQV offload enabled",
+    "checkpoint_identity": "caller label and verified metadata, not full weight hash",
+    "scope": "One independent contiguous text sequence; no prefix reuse, eviction or mixed sequences",
+    "native_qsa_score_max_abs_error": 0.00278094923039518,
+    "native_causal_pool_mask_verified": true,
+    "native_score_buffer_is_host": false,
+    "source_sha256": "5374ef6f636efd9547d6b240e0eb3a394d90228948f72ada5cdfbf3745437a9e",
+    "support_source_sha256": {
+      "native_score_reference.py": "9022880c0f0841a858635e1fd2a8040de06060abd63541e037ac987d7e6131e2"
+    },
+    "score_arithmetic_check": {
+      "max_abs_error": 0.00278094923039518,
+      "max_allowed_error_bound": 0.11674856047847898,
+      "max_error_to_bound_ratio": 0.024412457289187315,
+      "arithmetic": "stock_Vulkan_f16_dot4_with_f32_accumulation"
+    },
+    "projection_reference": null,
+    "query_positions": [
+      7,
+      15,
+      23,
+      31
+    ],
+    "prefill_seconds": 27.497727299996768,
+    "gpu_layers": 4,
+    "private_commit_limit_gib": 40,
+    "cpu_threads": 12,
+    "working_set_limit_gib": 8,
+    "watchdog_seconds": 600,
+    "native_map_sha256": null
+  },
+  {
+    "schema": 1,
+    "source_kind": "real_model_capture",
+    "stage": "post_norm_post_rope_pooled_indexer",
+    "model_id": "Qwen3.8-Flash-Next-Q4_K_XL-IQ4NL",
+    "layer": 35,
+    "document_ids": [
+      "public-short-heldout-final"
+    ],
+    "prompt_sha256": "1e6bfb7b5f3eae669b94f0875cd0a6715bea944abc19c6ef5b3ff5d81e67717f",
+    "tokens": 32,
+    "decode_status": 0,
+    "intentional_early_abort": false,
+    "attention_kv_types": "Q8_0/Q8_0",
+    "flash_attention": true,
+    "device": "CPU/Vulkan hybrid, n_gpu_layers=4, KQV offload enabled",
+    "checkpoint_identity": "caller label and verified metadata, not full weight hash",
+    "scope": "One independent contiguous text sequence; no prefix reuse, eviction or mixed sequences",
+    "native_qsa_score_max_abs_error": 0.003125797067724534,
+    "native_causal_pool_mask_verified": true,
+    "native_score_buffer_is_host": false,
+    "source_sha256": "5374ef6f636efd9547d6b240e0eb3a394d90228948f72ada5cdfbf3745437a9e",
+    "support_source_sha256": {
+      "native_score_reference.py": "9022880c0f0841a858635e1fd2a8040de06060abd63541e037ac987d7e6131e2"
+    },
+    "score_arithmetic_check": {
+      "max_abs_error": 0.003125797067724534,
+      "max_allowed_error_bound": 0.1144440330974481,
+      "max_error_to_bound_ratio": 0.029411567308319536,
+      "arithmetic": "stock_Vulkan_f16_dot4_with_f32_accumulation"
+    },
+    "projection_reference": null,
+    "query_positions": [
+      7,
+      15,
+      23,
+      31
+    ],
+    "prefill_seconds": 27.497727299996768,
+    "gpu_layers": 4,
+    "private_commit_limit_gib": 40,
+    "cpu_threads": 12,
+    "working_set_limit_gib": 8,
+    "watchdog_seconds": 600,
+    "native_map_sha256": null
+  },
+  {
+    "schema": 1,
+    "source_kind": "real_model_capture",
+    "stage": "post_norm_post_rope_pooled_indexer",
+    "model_id": "Qwen3.8-Flash-Next-Q4_K_XL-IQ4NL",
+    "layer": 39,
+    "document_ids": [
+      "public-short-heldout-final"
+    ],
+    "prompt_sha256": "1e6bfb7b5f3eae669b94f0875cd0a6715bea944abc19c6ef5b3ff5d81e67717f",
+    "tokens": 32,
+    "decode_status": 0,
+    "intentional_early_abort": false,
+    "attention_kv_types": "Q8_0/Q8_0",
+    "flash_attention": true,
+    "device": "CPU/Vulkan hybrid, n_gpu_layers=4, KQV offload enabled",
+    "checkpoint_identity": "caller label and verified metadata, not full weight hash",
+    "scope": "One independent contiguous text sequence; no prefix reuse, eviction or mixed sequences",
+    "native_qsa_score_max_abs_error": 0.0028423377797608396,
+    "native_causal_pool_mask_verified": true,
+    "native_score_buffer_is_host": false,
+    "source_sha256": "5374ef6f636efd9547d6b240e0eb3a394d90228948f72ada5cdfbf3745437a9e",
+    "support_source_sha256": {
+      "native_score_reference.py": "9022880c0f0841a858635e1fd2a8040de06060abd63541e037ac987d7e6131e2"
+    },
+    "score_arithmetic_check": {
+      "max_abs_error": 0.0028423377797608396,
+      "max_allowed_error_bound": 0.11446954887194094,
+      "max_error_to_bound_ratio": 0.027780308557038724,
+      "arithmetic": "stock_Vulkan_f16_dot4_with_f32_accumulation"
+    },
+    "projection_reference": null,
+    "query_positions": [
+      7,
+      15,
+      23,
+      31
+    ],
+    "prefill_seconds": 27.497727299996768,
+    "gpu_layers": 4,
+    "private_commit_limit_gib": 40,
+    "cpu_threads": 12,
+    "working_set_limit_gib": 8,
+    "watchdog_seconds": 600,
+    "native_map_sha256": null
+  },
+  {
+    "schema": 1,
+    "source_kind": "real_model_capture",
+    "stage": "post_norm_post_rope_pooled_indexer",
+    "model_id": "Qwen3.8-Flash-Next-Q4_K_XL-IQ4NL",
+    "layer": 43,
+    "document_ids": [
+      "public-short-heldout-final"
+    ],
+    "prompt_sha256": "1e6bfb7b5f3eae669b94f0875cd0a6715bea944abc19c6ef5b3ff5d81e67717f",
+    "tokens": 32,
+    "decode_status": 0,
+    "intentional_early_abort": false,
+    "attention_kv_types": "Q8_0/Q8_0",
+    "flash_attention": true,
+    "device": "CPU/Vulkan hybrid, n_gpu_layers=4, KQV offload enabled",
+    "checkpoint_identity": "caller label and verified metadata, not full weight hash",
+    "scope": "One independent contiguous text sequence; no prefix reuse, eviction or mixed sequences",
+    "native_qsa_score_max_abs_error": 0.004062719570493201,
+    "native_causal_pool_mask_verified": true,
+    "native_score_buffer_is_host": false,
+    "source_sha256": "5374ef6f636efd9547d6b240e0eb3a394d90228948f72ada5cdfbf3745437a9e",
+    "support_source_sha256": {
+      "native_score_reference.py": "9022880c0f0841a858635e1fd2a8040de06060abd63541e037ac987d7e6131e2"
+    },
+    "score_arithmetic_check": {
+      "max_abs_error": 0.004062719570493201,
+      "max_allowed_error_bound": 0.12149611360695321,
+      "max_error_to_bound_ratio": 0.037994356743371815,
+      "arithmetic": "stock_Vulkan_f16_dot4_with_f32_accumulation"
+    },
+    "projection_reference": null,
+    "query_positions": [
+      7,
+      15,
+      23,
+      31
+    ],
+    "prefill_seconds": 27.497727299996768,
+    "gpu_layers": 4,
+    "private_commit_limit_gib": 40,
+    "cpu_threads": 12,
+    "working_set_limit_gib": 8,
+    "watchdog_seconds": 600,
+    "native_map_sha256": null
+  },
+  {
+    "schema": 1,
+    "source_kind": "real_model_capture",
+    "stage": "post_norm_post_rope_pooled_indexer",
+    "model_id": "Qwen3.8-Flash-Next-Q4_K_XL-IQ4NL",
+    "layer": 47,
+    "document_ids": [
+      "public-short-heldout-final"
+    ],
+    "prompt_sha256": "1e6bfb7b5f3eae669b94f0875cd0a6715bea944abc19c6ef5b3ff5d81e67717f",
+    "tokens": 32,
+    "decode_status": 0,
+    "intentional_early_abort": false,
+    "attention_kv_types": "Q8_0/Q8_0",
+    "flash_attention": true,
+    "device": "CPU/Vulkan hybrid, n_gpu_layers=4, KQV offload enabled",
+    "checkpoint_identity": "caller label and verified metadata, not full weight hash",
+    "scope": "One independent contiguous text sequence; no prefix reuse, eviction or mixed sequences",
+    "native_qsa_score_max_abs_error": 0.0033504130510717545,
+    "native_causal_pool_mask_verified": true,
+    "native_score_buffer_is_host": false,
+    "source_sha256": "5374ef6f636efd9547d6b240e0eb3a394d90228948f72ada5cdfbf3745437a9e",
+    "support_source_sha256": {
+      "native_score_reference.py": "9022880c0f0841a858635e1fd2a8040de06060abd63541e037ac987d7e6131e2"
+    },
+    "score_arithmetic_check": {
+      "max_abs_error": 0.0033504130510717545,
+      "max_allowed_error_bound": 0.1129380870482039,
+      "max_error_to_bound_ratio": 0.03240642018954484,
+      "arithmetic": "stock_Vulkan_f16_dot4_with_f32_accumulation"
+    },
+    "projection_reference": null,
+    "query_positions": [
+      7,
+      15,
+      23,
+      31
+    ],
+    "prefill_seconds": 27.497727299996768,
+    "gpu_layers": 4,
+    "private_commit_limit_gib": 40,
+    "cpu_threads": 12,
+    "working_set_limit_gib": 8,
+    "watchdog_seconds": 600,
+    "native_map_sha256": null
+  }
+]

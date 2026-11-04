@@ -1,0 +1,204 @@
+{
+  "schema": 1,
+  "kind": "synthetic_native_Vulkan_QSA_indexer_microbenchmark",
+  "device": "AMD Radeon 8065S / gfx1151, Windows Vulkan",
+  "cpu_fallback_allowed": false,
+  "source_sha256": {
+    "tests/bench-qwen4exp-pca.cpp": "6a77fc4f6c9033b76163df6cdded37b6899abd315fbb91c38c510d7502caf1fa",
+    "src/models/qwen4exp-pca.cpp": "bcac3c41019e46471e39ac879946ab656e0d619bb7c78839a07b2596b1933f4f"
+  },
+  "queries": 1,
+  "query_heads": 4,
+  "original_dimension": 128,
+  "projection_rank": 64,
+  "selected_pools": 512,
+  "pool_size": 4,
+  "fixture": "MSVC mt19937 seed 827+pools; independent normal values in first 64 lanes, zero remaining lanes; identity-prefix map. Exactly rank-64 fixture, not real model activations.",
+  "cache_storage": "F32 rows with raw128|pooled128 stride; production indexer cache is quantized. Cache gathering reads all128 lanes for stock and the first64 lanes for projected scoring.",
+  "timing": "Three warmups each, then 15 alternating synchronized runs of prebuilt graphs. Includes GPU query projection for the rank64 path, pooled-row gathering, scores, and native top512 selection. Excludes setup, cache construction/new-pool projection, uploads, readback, attention and model execution. Samples are sorted, not time ordered.",
+  "arithmetic": "Stock fused indexer uses FP16 dot4 intermediates. Projected operations explicitly permit FP16-or-better operands with F32 accumulation; one-query vector operations on this backend retain F32 operands. No global precision-disable environment flags are used.",
+  "rows": [
+    {
+      "pools": 1024,
+      "represented_tokens": 4096,
+      "stock_median_ms": 0.062,
+      "rank64_median_ms": 0.105,
+      "synthetic_top512_recall": 1.0,
+      "sorted_samples_ms": {
+        "stock_ms": [
+          0.0602,
+          0.0603,
+          0.0609,
+          0.0613,
+          0.0616,
+          0.0616,
+          0.062,
+          0.062,
+          0.0621,
+          0.0622,
+          0.0859,
+          0.0867,
+          0.0885,
+          0.0922,
+          0.0965
+        ],
+        "rank64_ms": [
+          0.085,
+          0.0862,
+          0.0867,
+          0.0881,
+          0.0884,
+          0.0885,
+          0.0923,
+          0.105,
+          0.1827,
+          0.1968,
+          0.2058,
+          0.2079,
+          0.2198,
+          0.2415,
+          0.8666
+        ]
+      }
+    },
+    {
+      "pools": 4096,
+      "represented_tokens": 16384,
+      "stock_median_ms": 0.0871,
+      "rank64_median_ms": 0.1265,
+      "synthetic_top512_recall": 1.0,
+      "sorted_samples_ms": {
+        "stock_ms": [
+          0.0686,
+          0.0779,
+          0.0859,
+          0.0863,
+          0.0866,
+          0.0866,
+          0.0869,
+          0.0871,
+          0.0875,
+          0.0881,
+          0.0882,
+          0.0886,
+          0.0927,
+          0.1007,
+          0.1135
+        ],
+        "rank64_ms": [
+          0.1032,
+          0.1036,
+          0.104,
+          0.1042,
+          0.1064,
+          0.1064,
+          0.1076,
+          0.1265,
+          0.2022,
+          0.2086,
+          0.2092,
+          0.2105,
+          0.2206,
+          0.2236,
+          0.2254
+        ]
+      }
+    },
+    {
+      "pools": 16384,
+      "represented_tokens": 65536,
+      "stock_median_ms": 0.1806,
+      "rank64_median_ms": 0.2165,
+      "synthetic_top512_recall": 0.998046875,
+      "sorted_samples_ms": {
+        "stock_ms": [
+          0.1508,
+          0.151,
+          0.1526,
+          0.1633,
+          0.1646,
+          0.1793,
+          0.1796,
+          0.1806,
+          0.181,
+          0.1917,
+          0.1955,
+          0.1972,
+          0.2051,
+          0.2053,
+          0.211
+        ],
+        "rank64_ms": [
+          0.1988,
+          0.2031,
+          0.2033,
+          0.2047,
+          0.2099,
+          0.2139,
+          0.2148,
+          0.2165,
+          0.2169,
+          0.2237,
+          0.2245,
+          0.2374,
+          0.2413,
+          0.2764,
+          0.2767
+        ]
+      }
+    },
+    {
+      "pools": 65536,
+      "represented_tokens": 262144,
+      "stock_median_ms": 0.7113,
+      "rank64_median_ms": 0.6253,
+      "synthetic_top512_recall": 1.0,
+      "sorted_samples_ms": {
+        "stock_ms": [
+          0.6809,
+          0.6815,
+          0.6828,
+          0.6831,
+          0.6975,
+          0.7002,
+          0.7101,
+          0.7113,
+          0.7147,
+          0.7217,
+          0.7257,
+          0.7326,
+          0.7357,
+          0.744,
+          0.8276
+        ],
+        "rank64_ms": [
+          0.5933,
+          0.5961,
+          0.6018,
+          0.6027,
+          0.6167,
+          0.6201,
+          0.6212,
+          0.6253,
+          0.6442,
+          0.6482,
+          0.6494,
+          0.6676,
+          0.683,
+          0.6971,
+          0.7275
+        ]
+      }
+    }
+  ],
+  "production_speedup_demonstrated": false,
+  "limitations": "One fixed repeated synthetic query and one desktop run. Represented 262144 tokens means 65536 pooled vectors, not a populated 256K model context or C5. The final largest indexer fixture is about 12.1 percent faster, while smaller fixtures are slower. This is not a model inference speedup.",
+  "runtime_dll_sha256": {
+    "ggml.dll": "b1ff35d813cba8791b9363cce289ba14e006ad00ea7538b01adfda77294c74f6",
+    "ggml-vulkan.dll": "6f9222819e6888e3017ee1906a4db3b2de2833ec03782be45281bc4ba61d758b",
+    "ggml-base.dll": "2ea06e0bfef9a30765ec9c62c57d3423ff791f6012dc432dfe26036943b77413",
+    "llama.dll": "5b468ec268b98b0f6b71741c1765c2359db0ea9ecd9b4bbd6fba08bcd232c272",
+    "ggml-cpu-zen4.dll": "b73462f66b394a9c317822e5a621f72d2023f78f6be395f6efe5b67e312f20f1",
+    "libomp.dll": "a12116ba72d1d6820407cf30be23da04ce79d6bb8a71a5ee71759c5a1faa6f1c"
+  }
+}
