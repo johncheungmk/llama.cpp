@@ -1,6 +1,10 @@
-# Proposed full-GPU comparison
+# Full-GPU comparison: partial attempt and remaining procedure
 
-This procedure is prepared but has not been executed. It requires separate authorization for a maintenance window because the current instruction preserves the live service. The native implementation, model-output controls and hybrid 4K validation are separate from this proposed full-GPU benchmark.
+Only the maps-disabled 4K quality capture completed. The comparison was interrupted during the subsequent 8K baseline model load; no projected quality arm or C1-C5 burst ran. No five-slot experimental server was loaded. This attempt establishes neither its memory fit nor an out-of-memory failure.
+
+The completed baseline offloaded 49/49 model layers to Vulkan and used 4,096 input tokens, one 8,192-token context, Q8_0 K/V, 256-token batch/ubatch, twelve CPU threads, an 8 GiB hard working-set limit and a 120 GiB private-commit ceiling. Prefill took **10.408779 seconds**; sixteen C API decode steps averaged **11.888848 tokens/sec**, including a substantially slower first step. This is a short instrumented baseline, not serving C1 throughput, a stable decode estimate, or a measured LSA speedup. The projected arm is missing, so no matched quality conclusion can be drawn from this attempt. [Public baseline settings, timings and experimental-runtime fingerprints](results/native-fullgpu-baseline.json) are provided. Private machine and service audits are excluded from the public results.
+
+The remaining procedure below has not completed. It requires a maintenance window that includes restoring production. The earlier native controls and hybrid 4K quality regression remain separate evidence.
 
 ## Window and restoration
 

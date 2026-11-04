@@ -6,7 +6,7 @@ This llama.cpp fork contains synthetic sparse-attention primitives and an opt-in
 
 [Native measurements and current validation limits](NATIVE_RESULTS.md) distinguish real calibration, synthetic GPU timings, server smoke checks and model-output validation.
 
-The current rank64 map worsens perplexity by **6.57%** on the matched 4K fixture. The all-visible output control passes exactly, but pruning quality remains unresolved. Production is unchanged. Full-GPU C1-C5 measurements require the separately authorized [maintenance procedure](FULL_GPU_TEST_PLAN.md).
+The current rank64 map worsens perplexity by **6.57%** on the matched 4K fixture. The all-visible output control passes exactly, but pruning quality remains unresolved. A subsequent full-GPU attempt completed only a 4K baseline. No matched full-GPU or C1-C5 result is available. The [partial result and remaining procedure](FULL_GPU_TEST_PLAN.md) document its settings and limitations.
 
 **Phase 2:** [FLASH_NEXT.md](FLASH_NEXT.md) adds a real-checkpoint CPU activation collector, experimentally calibrated maps for all 12 QSA layers, QSA-specific vectorized search, and measured synthetic selection-plus-attention latency. Real calibration and synthetic performance evidence are distinct. The production model still does not execute LSA.
 
